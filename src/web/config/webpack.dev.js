@@ -1,8 +1,9 @@
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 
-const common = require('./webpack.common.js')
 const paths = require('./paths')
+const common = require('./webpack.common')
+const postcssOptions = require('./postcssOptions')
 
 module.exports = merge(common, {
   // Set the mode to development or production
@@ -15,10 +16,10 @@ module.exports = merge(common, {
   devServer: {
     historyApiFallback: true,
     contentBase: paths.build,
-    open: true,
+    open: false,
     compress: true,
     hot: true,
-    port: 8080,
+    port: 3000,
   },
 
   module: {
@@ -32,7 +33,13 @@ module.exports = merge(common, {
             loader: 'css-loader',
             options: { sourceMap: true, importLoaders: 1, modules: true },
           },
-          { loader: 'postcss-loader', options: { sourceMap: true } },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions,
+              sourceMap: true,
+            },
+          },
           { loader: 'sass-loader', options: { sourceMap: true } },
         ],
       },

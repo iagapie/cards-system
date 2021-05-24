@@ -28,9 +28,14 @@
       "error",
       {
         "ignoreUrls": true,
+        "ignoreComments": true,
+        "ignoreTrailingComments": true,
         "code": 80
       }
     ],
+    "prefer-template": "off",
+    "indent": [1, 2],
+    "object-curly-spacing": 1,
     "no-multiple-empty-lines": [
       1,
       {
@@ -45,10 +50,12 @@
     "no-console": 1,
     "no-template-curly-in-string": 1,
     "no-self-compare": 1,
+    "semi": [1, "never"],
     "import/no-extraneous-dependencies": ["off", { "devDependencies": false }],
     "import/prefer-default-export": 0,
     "arrow-body-style": 1,
-    "func-names": [1, "as-needed"]
+    "func-names": [1, "as-needed"],
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }]
   },
   "settings": {
     "import/resolver": {

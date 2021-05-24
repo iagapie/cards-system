@@ -3,7 +3,8 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const { merge } = require('webpack-merge')
 
 const paths = require('./paths')
-const common = require('./webpack.common.js')
+const common = require('./webpack.common')
+const postcssOptions = require('./postcssOptions')
 
 module.exports = merge(common, {
   mode: 'production',
@@ -27,7 +28,12 @@ module.exports = merge(common, {
               modules: true,
             },
           },
-          'postcss-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions,
+            },
+          },
           'sass-loader',
         ],
       },
