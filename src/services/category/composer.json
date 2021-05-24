@@ -1,0 +1,46 @@
+{
+    "name": "iagapie/category-service",
+    "description": "Category Service App",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Agapie",
+            "email": "igoragapie@gmail.com"
+        }
+    ],
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/iagapie/migrations"
+    }],
+    "require": {
+        "php": ">= 8.0",
+        "ext-json": "*",
+        "ext-pdo": "*",
+        "doctrine/dbal": "^3.1",
+        "doctrine/migrations": "3.1.x-dev",
+        "iagapie/fast-route-attribute": "^1.0",
+        "laminas/laminas-httphandlerrunner": "^1.4",
+        "monolog/monolog": "^2.2",
+        "nyholm/psr7": "^1.4",
+        "nyholm/psr7-server": "^1.0",
+        "symfony/config": "^5.2",
+        "symfony/console": "^5.2",
+        "symfony/dependency-injection": "^5.2",
+        "symfony/event-dispatcher": "^5.2",
+        "symfony/finder": "^5.2",
+        "symfony/yaml": "^5.2"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "CategoryService\\": "src/"
+        }
+    }
+}
