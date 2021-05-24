@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook } from '@fortawesome/free-brands-svg-icons'
 
-const HomePage = () => (
+export const Home = () => (
   <>
     <h1>Hello World!!!</h1>
     <div>
@@ -9,5 +9,3 @@ const HomePage = () => (
     </div>
   </>
 )
-
-export default HomePage

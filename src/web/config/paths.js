@@ -7,8 +7,8 @@ module.exports = {
   // Production build files
   build: path.resolve(__dirname, '../dist'),
 
-  // Static files that get copied to build folder
-  public: path.resolve(__dirname, '../public'),
+  // Assets files that get copied to build folder
+  assets: path.resolve(__dirname, '../src/assets'),
 
   // Env files
   dotenv: path.resolve(__dirname, '../.env'),

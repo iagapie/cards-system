@@ -1,15 +1,12 @@
-import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { Router } from 'react-router-dom'
 import 'regenerator-runtime/runtime'
 import createSagaMiddleware from 'redux-saga'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 
-import App from './containers/App'
 import rootSaga from './sagas'
 import rootReducer from './slices'
-import history from './utils/history'
+import { App } from './components/App'
 
 import './styles/index.scss'
 
@@ -23,12 +20,8 @@ const store = configureStore({
 sagaMiddleware.run(rootSaga)
 
 render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <Router history={history}>
-        <App />
-      </Router>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById('root'),
 )

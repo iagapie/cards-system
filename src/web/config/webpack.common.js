@@ -62,15 +62,15 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: paths.public,
+          from: paths.assets,
           to: 'assets',
           globOptions: {
-            ignore: ['**/*.DS_Store', '**/*.txt', '**/template.html'],
+            ignore: ['**/*.DS_Store'],
           },
           noErrorOnMissing: true,
         },
         {
-          from: `${paths.public}/robots.txt`,
+          from: `${paths.src}/robots.txt`,
           to: 'robots.txt',
         },
       ],
@@ -80,8 +80,7 @@ module.exports = {
     // Generates deprecation warning: https://github.com/jantimon/html-webpack-plugin/issues/1501
     new HtmlWebpackPlugin({
       title: 'Cards System',
-      favicon: `${paths.src}/images/favicon.png`,
-      template: `${paths.public}/template.html`, // template file
+      template: `${paths.src}/index.html`, // template file
       filename: 'index.html', // output file
     }),
 
