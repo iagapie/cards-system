@@ -10,8 +10,8 @@ import {
 
 function* loginUser() {
   try {
+    // TODO
     // const { data } = yield axios('/api/auth/login')
-    //
     // yield put(loginSuccess(data))
     yield put(loginSuccess({ name: 'Demo User' }))
   } catch (error) {
@@ -21,6 +21,7 @@ function* loginUser() {
 
 function* logoutUser() {
   try {
+    // TODO
     // yield axios('/api/auth/logout')
 
     yield put(logoutSuccess())

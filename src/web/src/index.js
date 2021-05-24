@@ -11,7 +11,7 @@ import rootSaga from './sagas'
 import rootReducer from './slices'
 import history from './utils/history'
 
-import '@/styles/index.scss'
+import './styles/index.scss'
 
 const sagaMiddleware = createSagaMiddleware()
 const store = configureStore({

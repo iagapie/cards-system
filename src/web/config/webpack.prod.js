@@ -16,6 +16,8 @@ module.exports = merge(common, {
   },
   module: {
     rules: [
+      // JavaScript: Use Babel to transpile JavaScript files
+      { test: /\.(js|jsx)$/, use: ['babel-loader'] },
       {
         test: /\.(scss|css)$/,
         use: [

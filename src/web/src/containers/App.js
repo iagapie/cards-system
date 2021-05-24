@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { getAuth } from '../selectors'
 import { login } from '../slices/auth'
+import HomePage from '../components/HomePage'
 
 const App = () => {
   const { loading } = useSelector(getAuth)
@@ -17,7 +19,12 @@ const App = () => {
     return <div>Loading...</div>
   }
 
-  return <h1>Hello World</h1>
+  return (
+    <Switch>
+      <Route exact path="/" component={HomePage} />
+      <Redirect to="/" />
+    </Switch>
+  )
 }
 
 export default App
