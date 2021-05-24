@@ -65,9 +65,13 @@ module.exports = {
           from: paths.public,
           to: 'assets',
           globOptions: {
-            ignore: ['*.DS_Store'],
+            ignore: ['**/*.DS_Store', '**/*.txt', '**/template.html'],
           },
           noErrorOnMissing: true,
+        },
+        {
+          from: `${paths.public}/robots.txt`,
+          to: 'robots.txt',
         },
       ],
     }),
@@ -75,9 +79,9 @@ module.exports = {
     // Generates an HTML file from a template
     // Generates deprecation warning: https://github.com/jantimon/html-webpack-plugin/issues/1501
     new HtmlWebpackPlugin({
-      title: 'webpack Boilerplate',
-      favicon: paths.src + '/images/favicon.png',
-      template: paths.src + '/template.html', // template file
+      title: 'Cards System',
+      favicon: `${paths.src}/images/favicon.png`,
+      template: `${paths.public}/template.html`, // template file
       filename: 'index.html', // output file
     }),
 
