@@ -1,46 +1,13 @@
+const webpack = require('webpack')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
 
-const fs = require('fs')
-const dotenv = require('dotenv')
-const dotenvExpand = require('dotenv-expand')
 const paths = require('./paths')
+const getClientEnvironment = require('./env')
 
-const { NODE_ENV } = process.env
-
-// if (!NODE_ENV) {
-//   throw new Error(
-//     'The NODE_ENV environment variable is required but was not specified.',
-//   )
-// }
-
-// https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
-const dotenvFiles = [
-  `${paths.dotenv}.${NODE_ENV}.local`,
-  // Don't include `.env.local` for `test` environment
-  // since normally you expect tests to produce the same
-  // results for everyone
-  NODE_ENV !== 'test' && `${paths.dotenv}.local`,
-  `${paths.dotenv}.${NODE_ENV}`,
-  paths.dotenv,
-].filter(Boolean)
-
-// Load environment variables from .env* files. Suppress warnings using silent
-// if this file is missing. dotenv will never modify any environment variables
-// that have already been set.  Variable expansion is supported in .env files.
-// https://github.com/motdotla/dotenv
-// https://github.com/motdotla/dotenv-expand
-dotenvFiles.forEach((dotenvFile) => {
-  if (fs.existsSync(dotenvFile)) {
-    dotenvExpand(
-      dotenv.config({
-        path: dotenvFile,
-      }),
-    )
-  }
-})
+const env = getClientEnvironment()
 
 module.exports = {
   // Where webpack looks to start building the bundle
@@ -83,6 +50,10 @@ module.exports = {
       template: `${paths.src}/index.html`, // template file
       filename: 'index.html', // output file
     }),
+
+    // Makes some environment variables available to the JS code, for example:
+    // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
+    new webpack.DefinePlugin(env.stringified),
 
     // ESLint configuration
     new ESLintPlugin({

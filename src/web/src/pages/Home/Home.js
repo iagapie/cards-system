@@ -1,11 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook } from '@fortawesome/free-brands-svg-icons'
 
-export const Home = () => (
-  <>
-    <h1>Hello World!!!</h1>
-    <div>
-      <FontAwesomeIcon icon={faFacebook} />
-    </div>
-  </>
-)
+export const Home = () => {
+  console.log(process.env)
+  return (
+    <>
+      <h1>Home Page</h1>
+      <div>
+        <FontAwesomeIcon icon={faFacebook} />
+      </div>
+    </>
+  )
+}

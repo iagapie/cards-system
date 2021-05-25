@@ -1,4 +1,4 @@
-import { all, put, takeLatest } from 'redux-saga/effects'
+import { all, call, put, takeLatest } from 'redux-saga/effects'
 
 import {
   login,
@@ -7,13 +7,13 @@ import {
   logout,
   logoutSuccess,
 } from '../slices/auth'
+import { removeTokens } from '../utils/tokens'
+import { apiMe } from '../api/user'
 
 function* loginUser() {
   try {
-    // TODO
-    // const { data } = yield axios('/api/auth/login')
-    // yield put(loginSuccess(data))
-    yield put(loginSuccess({ name: 'Demo User' }))
+    const { data } = yield call(apiMe)
+    yield put(loginSuccess(data))
   } catch (error) {
     yield put(loginError(error.message))
   }
@@ -21,9 +21,7 @@ function* loginUser() {
 
 function* logoutUser() {
   try {
-    // TODO
-    // yield axios('/api/auth/logout')
-
+    removeTokens()
     yield put(logoutSuccess())
   } catch (error) {
     yield put(logoutSuccess())
