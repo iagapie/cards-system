@@ -35,7 +35,7 @@ const RootRouter = () => (
       <Route exact path={ROUTES.AUTH.VERIFICATION}>
         <Verification />
       </Route>
-      <PrivateRoute exact path={ROUTES.SPACE.HOME}>
+      <PrivateRoute path={ROUTES.SPACE.HOME}>
         <SpaceRouter />
       </PrivateRoute>
       <Route exact path={ROUTES.ERROR.NOT_FOUND}>

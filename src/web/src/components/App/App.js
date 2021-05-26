@@ -6,7 +6,7 @@ import history from '../../utils/history'
 import RootRouter from '../../pages/RootRouter'
 import { Loader } from '../Loader'
 import { getAuth } from '../../selectors'
-import { login } from '../../slices/auth'
+import { loginByToken } from '../../slices/auth'
 
 export const App = () => {
   const { loading } = useSelector(getAuth)
@@ -14,7 +14,7 @@ export const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(login())
+    dispatch(loginByToken())
   }, [dispatch])
 
   if (loading) {

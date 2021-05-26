@@ -5,17 +5,13 @@ import { Redirect, Route } from 'react-router-dom'
 import { getAuth } from '../../selectors'
 import { ROUTES } from '../../constants/routes'
 
-export const PrivateRoute = ({ component: Component, ...rest }) => {
+export const PrivateRoute = ({ children: Component, ...rest }) => {
   const { isAuthenticated } = useSelector(getAuth)
 
   return (
     <Route
-      render={(props) =>
-        isAuthenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={ROUTES.AUTH.LOGIN} />
-        )
+      render={() =>
+        isAuthenticated ? Component : <Redirect to={ROUTES.AUTH.LOGIN} />
       }
       {...rest}
     />
@@ -23,5 +19,5 @@ export const PrivateRoute = ({ component: Component, ...rest }) => {
 }
 
 PrivateRoute.propTypes = {
-  component: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 }

@@ -1,7 +1,14 @@
 import { Suspense } from 'react'
-import { useRouteMatch, useParams, Switch, Route } from 'react-router-dom'
+import {
+  useRouteMatch,
+  useParams,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom'
 
 import { Loader } from '../../components/Loader'
+import { ROUTES } from '../../constants/routes'
 
 const Space = () => {
   const { spaceId } = useParams()
@@ -14,14 +21,17 @@ const SpaceRouter = () => {
   return (
     <Suspense fallback={<Loader />}>
       <Switch>
-        <Route path={`${match.path}/add`}>
+        <Route exact path={`${match.path}/add`}>
           <h1>Space Add Page</h1>
         </Route>
-        <Route path={`${match.path}/:spaceId`}>
+        <Route exact path={`${match.path}/:spaceId`}>
           <Space />
         </Route>
-        <Route path={match.path}>
+        <Route exact path={match.path}>
           <h1>Space List Page</h1>
+        </Route>
+        <Route path="*">
+          <Redirect to={ROUTES.ERROR.NOT_FOUND} />
         </Route>
       </Switch>
     </Suspense>
