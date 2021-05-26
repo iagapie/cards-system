@@ -29,6 +29,7 @@ func main() {
 	log := logging.Create(cfg.Log)
 	log.Println("config and logger initialized")
 
+	cfg.JWTAuth.SigningKey = cfg.JWTToken.SigningKey
 	gof.SetMode(c.GetEnvironment())
 
 	log.Println("router initializing")
