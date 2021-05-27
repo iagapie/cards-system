@@ -1,9 +1,7 @@
 package user
 
 import (
-	"fmt"
 	"github.com/google/uuid"
-	"github.com/iagapie/cards-system/user-service/pkg/password"
 	"time"
 )
 
@@ -16,40 +14,21 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at" gorm:"index"`
 }
 
-func NewUser(dto CreateUserDTO, encoder password.Encoder) (User, error) {
-	encoded, err := encoder.Encode(dto.Password)
-	if err != nil {
-		return User{}, err
-	}
-
+func NewUser(dto CreateUserDTO) User {
 	return User{
 		UUID:      uuid.NewString(),
 		Name:      dto.Name,
 		Email:     dto.Email,
-		Password:  encoded,
+		Password:  dto.Password,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-	}, nil
+	}
 }
 
-func (u *User) Update(dto UpdateUserDTO, encoder password.Encoder) error {
+func (u *User) Update(dto UpdateUserDTO) {
 	u.UpdatedAt = time.Now()
 	u.Name = dto.Name
 	u.Email = dto.Email
-
-	if dto.OldPassword != "" {
-		if !encoder.IsValid(u.Password, dto.OldPassword) {
-			return fmt.Errorf("current password %s is not valid", dto.OldPassword)
-		}
-
-		encoded, err := encoder.Encode(dto.NewPassword)
-		if err != nil {
-			return err
-		}
-		u.Password = encoded
-	}
-
-	return nil
 }
 
 type FilterDTO struct {

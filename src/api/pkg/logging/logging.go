@@ -34,19 +34,7 @@ type (
 	}
 )
 
-func GetLevel(l logrus.FieldLogger) logrus.Level {
-	if lr, ok := l.(*logrus.Logger); ok {
-		return lr.GetLevel()
-	}
-
-	if entry, ok := l.(*logrus.Entry); ok {
-		return entry.Logger.GetLevel()
-	}
-
-	return logrus.InfoLevel
-}
-
-func Create(cfg Config) logrus.Ext1FieldLogger {
+func Create(cfg Config) *logrus.Entry {
 	lr := logrus.New()
 
 	lvl, err := logrus.ParseLevel(cfg.Level)

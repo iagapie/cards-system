@@ -17,10 +17,10 @@ var _ user.Storage = &storage{}
 
 type storage struct {
 	db  *postgresdb.Database
-	log logrus.Ext1FieldLogger
+	log *logrus.Entry
 }
 
-func NewStorage(postgres *postgresdb.Database, log logrus.Ext1FieldLogger) user.Storage {
+func NewStorage(postgres *postgresdb.Database, log *logrus.Entry) user.Storage {
 	return &storage{
 		db:  postgres,
 		log: log,

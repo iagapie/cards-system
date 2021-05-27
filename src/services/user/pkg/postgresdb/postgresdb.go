@@ -2,7 +2,6 @@ package postgresdb
 
 import (
 	"fmt"
-	"github.com/iagapie/cards-system/user-service/pkg/logging"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -23,11 +22,11 @@ type (
 
 	Database struct {
 		Gorm   *gorm.DB
-		logger logrus.Ext1FieldLogger
+		logger *logrus.Entry
 	}
 )
 
-func New(cfg Config, log logrus.Ext1FieldLogger) *Database {
+func New(cfg Config, log *logrus.Entry) *Database {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
 		cfg.Host, cfg.User, cfg.Password, cfg.Name, cfg.Port, cfg.SSLMode, cfg.TimeZone,
@@ -36,7 +35,7 @@ func New(cfg Config, log logrus.Ext1FieldLogger) *Database {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.New(log, logger.Config{
 			SlowThreshold: 200 * time.Millisecond,
-			LogLevel:      toGormLogLevel(logging.GetLevel(log)),
+			LogLevel:      toGormLogLevel(log.Level),
 			Colorful:      false,
 		}),
 	})

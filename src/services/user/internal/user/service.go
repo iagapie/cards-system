@@ -68,10 +68,12 @@ func (s *service) GetOne(ctx context.Context, uuid string) (User, error) {
 }
 
 func (s *service) Create(ctx context.Context, dto CreateUserDTO) (string, error) {
-	model, err := NewUser(dto, s.encoder)
+	encoded, err := s.encoder.Encode(dto.Password)
 	if err != nil {
 		return "", fmt.Errorf("failed to create user. error: %w", err)
 	}
+	model := NewUser(dto)
+	model.Password = encoded
 	if err = s.storage.Create(ctx, model); err != nil {
 		if errors.Is(err, ErrRecordConflict) {
 			return "", err
@@ -90,8 +92,19 @@ func (s *service) Update(ctx context.Context, dto UpdateUserDTO) error {
 		return fmt.Errorf("failed to update user. error: %w", err)
 	}
 
-	if err = model.Update(dto, s.encoder); err != nil {
-		return fmt.Errorf("failed to update user. error: %w", err)
+	model.Update(dto)
+
+	if dto.OldPassword != "" {
+		if !s.encoder.IsValid(model.Password, dto.OldPassword) {
+			err = fmt.Errorf("old password %s is not valid", dto.OldPassword)
+			return fmt.Errorf("failed to update user. error: %w", err)
+		}
+
+		encoded, err := s.encoder.Encode(dto.NewPassword)
+		if err != nil {
+			return fmt.Errorf("failed to update user. error: %w", err)
+		}
+		model.Password = encoded
 	}
 
 	if err = s.storage.Update(ctx, model); err != nil {
