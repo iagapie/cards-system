@@ -1,0 +1,16 @@
+### Get user
+
+GET http://localhost:8001/api/v1/users
+Accept: application/json
+
+### Create user
+
+POST http://localhost:8001/api/v1/users
+Content-Type: application/json
+
+{
+  "name": "Igor",
+  "email": "iagapie@gmail.com",
+  "password": "123",
+  "repeat_password": "123"
+}

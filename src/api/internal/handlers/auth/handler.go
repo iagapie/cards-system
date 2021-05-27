@@ -2,36 +2,31 @@ package auth
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 const (
-	api        = "/api"
-	v1         = api + "/v1"
-	signUpURL  = v1 + "/sign-up"
-	verifyURL  = v1 + "/verify/{code}"
-	signInURL  = v1 + "/sign-in"
-	refreshURL = v1 + "/refresh"
+	signUpURL  = "/api/v1/sign-up"
+	signInURL  = "/api/v1/sign-in"
+	refreshURL = "/api/v1/refresh"
 )
 
 type Handler struct {
+	Log logrus.FieldLogger
 }
 
 func (h *Handler) Register(router *mux.Router) {
-	router.HandleFunc(signUpURL, h.signUp).Methods(http.MethodPost)
-	router.HandleFunc(verifyURL, h.verify).Methods(http.MethodPost)
-	router.HandleFunc(signInURL, h.signIn).Methods(http.MethodPost)
-	router.HandleFunc(refreshURL, h.refresh).Methods(http.MethodPost)
+	router.HandleFunc(signUpURL, h.SignUp).Methods(http.MethodPost)
+	router.HandleFunc(signInURL, h.SignIn).Methods(http.MethodPost)
+	router.HandleFunc(refreshURL, h.Refresh).Methods(http.MethodPost)
 }
 
-func (h *Handler) signUp(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
-func (h *Handler) verify(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 }
 
-func (h *Handler) signIn(w http.ResponseWriter, r *http.Request) {
-}
-
-func (h *Handler) refresh(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 }

@@ -1,0 +1,15 @@
+log:
+  fields:
+    service: "USER"
+  writers:
+    - name: "stderr"
+      levels:
+        - "panic"
+        - "fatal"
+        - "error"
+    - name: "stdout"
+      levels:
+        - "warn"
+        - "info"
+        - "debug"
+        - "trace"

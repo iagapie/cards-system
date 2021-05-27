@@ -19,9 +19,6 @@ export const apiRegistration = ({ name, email, password }) =>
     },
   })
 
-export const apiVerification = ({ code }) =>
-  request('POST')(ENDPOINTS.AUTH.VERIFICATION(code))()
-
 export const apiRefreshToken = ({ token }) =>
   request('POST')(ENDPOINTS.AUTH.REFRESH)({
     data: {

@@ -17,7 +17,6 @@ WORKDIR /root
 
 COPY --from=builder /go/src/github.com/iagapie/cards-system/.bin/app .
 COPY --from=builder /go/src/github.com/iagapie/cards-system/configs configs/
-COPY --from=builder /go/src/github.com/iagapie/cards-system/api api/
 
 EXPOSE 80 443
 

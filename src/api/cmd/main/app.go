@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	GlobalConfigFile = "/etc/feeder/config.yml"
+	GlobalConfigFile = "/etc/cards-system/api.yml"
 	LocalConfigFile  = "configs/config.yml"
 )
 
@@ -40,17 +40,17 @@ func main() {
 		handlers.ProxyHeaders,
 		middleware.IP(),
 		middleware.Logger(log),
-		handlers.RecoveryHandler(handlers.RecoveryLogger(log)),
+		middleware.Recover(cfg.Recover, log),
 		middleware.Limiter(cfg.Limiter, log),
 		middleware.CORS(cfg.CORS, log),
 	)
 
 	log.Println("create and register handlers")
 
-	metricHandler := new(metric.Handler)
+	metricHandler := metric.Handler{NoHealth: true}
 	metricHandler.Register(router)
 
-	authHandler := new(auth.Handler)
+	authHandler := auth.Handler{Log: log}
 	authHandler.Register(router)
 
 	log.Println("start application")

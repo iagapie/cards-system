@@ -12,9 +12,6 @@ const Login = lazy(() => import(/* webpackChunkName: "login" */ './Auth/Login'))
 const Registration = lazy(() =>
   import(/* webpackChunkName: "registration" */ './Auth/Registration'),
 )
-const Verification = lazy(() =>
-  import(/* webpackChunkName: "verification" */ './Auth/Verification'),
-)
 const SpaceRouter = lazy(() =>
   import(/* webpackChunkName: "spaceRouter" */ './Space/SpaceRouter'),
 )
@@ -31,9 +28,6 @@ const RootRouter = () => (
       </Route>
       <Route exact path={ROUTES.AUTH.REGISTRATION}>
         <Registration />
-      </Route>
-      <Route exact path={ROUTES.AUTH.VERIFICATION}>
-        <Verification />
       </Route>
       <PrivateRoute path={ROUTES.SPACE.HOME}>
         <SpaceRouter />

@@ -5,9 +5,8 @@ export const ENDPOINTS = {
     REFRESH: '/refresh',
     LOGIN: '/sign-in',
     REGISTRATION: '/sign-up',
-    VERIFICATION: (code) => `/verify/${code}`,
   },
   USER: {
-    ME: '/user/me',
+    ME: '/me',
   },
 }

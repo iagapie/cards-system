@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"github.com/iagapie/cards-system/api-service/pkg/gof"
+	"github.com/iagapie/cards-system/user-service/pkg/gof"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"reflect"
