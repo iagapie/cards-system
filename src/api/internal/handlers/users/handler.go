@@ -2,31 +2,36 @@ package users
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/iagapie/cards-system/api-service/internal/client/user_service"
+	"github.com/iagapie/cards-system/api-service/internal/handlers"
+	"github.com/iagapie/cards-system/api-service/pkg/gof"
 	"github.com/iagapie/cards-system/api-service/pkg/middleware"
-	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 const (
-	api   = "/api"
-	v1    = api + "/v1"
-	meURL = v1 + "/me"
+	meURL = "/api/v1/me"
 )
 
 type Handler struct {
-	Log    logrus.FieldLogger
-	CfgJWT middleware.JWTAuthConfig
+	handlers.Handler
+	UserService user_service.UserService
 }
 
 func (h *Handler) Register(router *mux.Router) {
-	router.Handle(meURL, h.middleware(h.me)).Methods(http.MethodGet)
+	router.Handle(meURL, h.Auth(h.me, user_service.AuthClaimsDTO{})).Methods(http.MethodGet)
 }
 
-func (h *Handler) middleware(hf http.HandlerFunc) http.Handler {
-	return middleware.Chain(
-		middleware.JWTAuth(h.CfgJWT, h.Log),
-	)(hf)
-}
+func (h *Handler) me(w http.ResponseWriter, r *http.Request) error {
+	h.Log.Info("ME")
 
-func (h *Handler) me(w http.ResponseWriter, r *http.Request) {
+	h.Log.Debug("get auth claims dto from context")
+	dto := middleware.GetModelsFromContext(r)[0].(user_service.AuthClaimsDTO)
+
+	user, err := h.UserService.GetByUUID(r.Context(), dto.UUID)
+	if err != nil {
+		return err
+	}
+
+	return gof.OK(w, user)
 }

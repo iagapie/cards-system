@@ -19,8 +19,10 @@ const reload = () => window.location.reload()
 const refresh = () =>
   apiRefreshToken({ token: getRefreshToken() })
     .then((response) => {
-      const { accessToken, refreshToken } = response.data
-      rewriteTokens({ accessToken, refreshToken })
+      rewriteTokens({
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+      })
     })
     .catch((error) => {
       history.push(ROUTES.AUTH.LOGIN)

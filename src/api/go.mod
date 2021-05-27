@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/coocood/freecache v1.1.1
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/cristalhq/jwt/v3 v3.0.14 // indirect
 	github.com/go-playground/validator/v10 v10.6.1
 	github.com/google/uuid v1.2.0
 	github.com/gorilla/handlers v1.5.1

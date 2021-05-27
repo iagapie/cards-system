@@ -24,8 +24,10 @@ function* loginUser() {
 function* authorize(action) {
   try {
     const { data } = yield call(apiLogin, action.payload)
-    const { accessToken, refreshToken } = data
-    yield call(rewriteTokens, { accessToken, refreshToken })
+    yield call(rewriteTokens, {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+    })
     yield call(loginUser)
   } catch (error) {
     yield put(loginError(error.message))

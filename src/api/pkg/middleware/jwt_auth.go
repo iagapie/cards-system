@@ -2,38 +2,38 @@ package middleware
 
 import (
 	"context"
-	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"encoding/json"
+	"errors"
+	"github.com/cristalhq/jwt/v3"
 	"github.com/gorilla/mux"
 	"github.com/iagapie/cards-system/api-service/pkg/gof"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strings"
+	"time"
 )
 
 type (
 	JWTAuthConfig struct {
-		// Signing key to validate token. Used as fallback if SigningKeys has length 0.
-		// Required. This or SigningKeys.
-		SigningKey string `yaml:"signing_key" json:"signing_key"`
+		Signing struct {
+			// Signing key to validate token. Used as fallback if SigningKeys has length 0.
+			// Required. This or SigningKeys.
+			Key string `required:"true"`
 
-		// Map of signing keys to validate token with kid field usage.
-		// Required. This or SigningKey.
-		SigningKeys map[string]string `yaml:"signing_keys" json:"signing_keys"`
+			// Signing method, used to check token signing method.
+			// Optional. Default value HS256.
+			Method jwt.Algorithm `default:"HS256"`
+		}
 
-		// Signing method, used to check token signing method.
-		// Optional. Default value HS256.
-		SigningMethod string `default:"HS256" yaml:"signing_method" json:"signing_method"`
-
-		// Context key to store user information from the token into context.
-		// Optional. Default value "user".
-		ContextKey string `default:"user" yaml:"context_key" json:"context_key"`
-
-		// Claims are extendable claims data defining token content.
-		// Optional. Default value jwt.MapClaims
-		Claims jwt.Claims
+		ContextKey struct {
+			Token  string `default:"token"`
+			Claims string `default:"claims"`
+			Claim  struct {
+				ID      string `default:"claim_id"`
+				Subject string `default:"claim_subject"`
+			}
+		}
 
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.
@@ -49,7 +49,7 @@ type (
 		// Optional. Default value "Bearer".
 		AuthScheme string `default:"Bearer" yaml:"auth_scheme" json:"auth_scheme"`
 
-		keyFunc jwt.Keyfunc
+		Issuer string `required:"true"`
 	}
 
 	jwtExtractor func(*http.Request) (string, *gof.HTTPError)
@@ -61,31 +61,6 @@ var (
 )
 
 func JWTAuth(cfg JWTAuthConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
-	if cfg.SigningKey == "" && len(cfg.SigningKeys) == 0 {
-		log.Panic("jwt middleware requires signing key")
-	}
-
-	if cfg.Claims == nil {
-		cfg.Claims = jwt.MapClaims{}
-	}
-
-	cfg.keyFunc = func(t *jwt.Token) (interface{}, error) {
-		// Check the signing method
-		if t.Method.Alg() != cfg.SigningMethod {
-			return nil, fmt.Errorf("unexpected jwt signing method=%v", t.Header["alg"])
-		}
-		if len(cfg.SigningKeys) > 0 {
-			if kid, ok := t.Header["kid"].(string); ok {
-				if key, ok := cfg.SigningKeys[kid]; ok {
-					return []byte(key), nil
-				}
-			}
-			return nil, fmt.Errorf("unexpected jwt key id=%v", t.Header["kid"])
-		}
-
-		return []byte(cfg.SigningKey), nil
-	}
-
 	parts := strings.Split(cfg.TokenLookup, ":")
 	extractor := jwtFromHeader(parts[1], cfg.AuthScheme)
 	switch parts[0] {
@@ -99,31 +74,61 @@ func JWTAuth(cfg JWTAuthConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			auth, httpErr := extractor(r)
+			raw, httpErr := extractor(r)
 			if httpErr != nil {
 				httpErr.Log(log).Write(w)
 				return
 			}
 
-			token := new(jwt.Token)
-			var err error
-
-			if _, ok := cfg.Claims.(jwt.MapClaims); ok {
-				token, err = jwt.Parse(auth, cfg.keyFunc)
-			} else {
-				t := reflect.ValueOf(cfg.Claims).Type().Elem()
-				claims := reflect.New(t).Interface().(jwt.Claims)
-				token, err = jwt.ParseWithClaims(auth, claims, cfg.keyFunc)
-			}
-
-			if err == nil && token.Valid {
-				// Store user information from token into context.
-				ctx := context.WithValue(r.Context(), cfg.ContextKey, token)
-				h.ServeHTTP(w, r.WithContext(ctx))
+			log.Debug("create jwt verifier")
+			key := []byte(cfg.Signing.Key)
+			verifier, err := jwt.NewVerifierHS(cfg.Signing.Method, key)
+			if err != nil {
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
 				return
 			}
 
-			ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+			log.Debug("parse and verify jwt token")
+			token, err := jwt.ParseAndVerifyString(raw, verifier)
+			if err != nil {
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+				return
+			}
+
+			log.Debug("parse and validate jwt claims")
+			var claims jwt.RegisteredClaims
+			err = json.Unmarshal(token.RawClaims(), &claims)
+			if err != nil {
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+				return
+			}
+			if valid := claims.IsValidAt(time.Now()); !valid {
+				err = errors.New("token has been expired")
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+				return
+			}
+			if valid := claims.IsIssuer(cfg.Issuer); !valid {
+				err = errors.New("token iss is not valid")
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+				return
+			}
+			if claims.ID == "" {
+				err = errors.New("token jti is empty")
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+				return
+			}
+			if claims.Subject == "" {
+				err = errors.New("token sub is empty")
+				ErrJWTInvalid.SetInternal(err).Log(log).Write(w)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), cfg.ContextKey.Token, token)
+			ctx = context.WithValue(ctx, cfg.ContextKey.Claims, claims)
+			ctx = context.WithValue(ctx, cfg.ContextKey.Claim.ID, claims.ID)
+			ctx = context.WithValue(ctx, cfg.ContextKey.Claim.Subject, claims.Subject)
+
+			h.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

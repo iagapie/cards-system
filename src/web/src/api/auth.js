@@ -16,6 +16,7 @@ export const apiRegistration = ({ name, email, password }) =>
       name,
       email,
       password,
+      repeat_password: password,
     },
   })
 
