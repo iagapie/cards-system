@@ -1,6 +1,6 @@
-### Get user
+### Get users
 
-GET http://localhost:8001/api/v1/users
+GET http://localhost:8001/api/v1/users?email=iagapie@gmail.com&password=Root123#
 Accept: application/json
 
 ### Create user
@@ -10,7 +10,28 @@ Content-Type: application/json
 
 {
   "name": "Igor",
-  "email": "iagapie@gmail.com",
-  "password": "123",
-  "repeat_password": "123"
+  "email": "agapieigor@gmail.com",
+  "password": "Admin123",
+  "repeat_password": "Admin123"
 }
+
+### Get user
+
+GET http://localhost:8001/api/v1/users/f4d38cfd-b302-4ff1-ac73-0b753e15b0b5
+Accept: application/json
+
+### Update user
+
+PATCH http://localhost:8001/api/v1/users/f4d38cfd-b302-4ff1-ac73-0b753e15b0b5
+Content-Type: application/json
+
+{
+  "old_password": "Admin123",
+  "new_password": "Root123#",
+  "repeat_new_password": "Root123#"
+}
+
+### Delete user
+
+DELETE http://localhost:8001/api/v1/users/062e8a7c-6d45-4623-bad6-396f0f7319fb
+Content-Type: application/json

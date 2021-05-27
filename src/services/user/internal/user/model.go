@@ -8,9 +8,9 @@ import (
 )
 
 type User struct {
-	UUID      string    `json:"uuid,omitempty" gorm:"size:36,primaryKey"`
+	UUID      string    `json:"uuid,omitempty" gorm:"primaryKey;size:36"`
 	Name      string    `json:"name" gorm:"size:100"`
-	Email     string    `json:"email" gorm:"size:255,uniqueIndex"`
+	Email     string    `json:"email" gorm:"uniqueIndex;size:255"`
 	Password  string    `json:"-"`
 	CreatedAt time.Time `json:"created_at" gorm:"index"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"index"`
@@ -85,7 +85,7 @@ type CreateUserDTO struct {
 }
 
 type UpdateUserDTO struct {
-	UUID              string `param:"uuid,omitempty" validate:"required,uuid4"`
+	UUID              string `param:"uuid" validate:"required,uuid4"`
 	Name              string `json:"name,omitempty" validate:"max=100"`
 	Email             string `json:"email,omitempty" validate:"max=255"`
 	OldPassword       string `json:"old_password,omitempty" validate:"max=64"`
@@ -94,5 +94,5 @@ type UpdateUserDTO struct {
 }
 
 type IdDTO struct {
-	UUID string `param:"uuid,omitempty" validate:"required,uuid4"`
+	UUID string `param:"uuid" validate:"required,uuid4"`
 }

@@ -118,8 +118,8 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	w.WriteHeader(http.StatusCreated)
 	w.Header().Set(gof.HeaderLocation, fmt.Sprintf("%s/%s", usersURL, uuid))
+	w.WriteHeader(http.StatusCreated)
 
 	return nil
 }

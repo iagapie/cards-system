@@ -33,7 +33,7 @@ func toExpr(filter map[string]interface{}) []interface{} {
 	for key, value := range filter {
 		if data, ok := value.([]string); ok {
 			values := make([]interface{}, len(data))
-			for i, item := range values {
+			for i, item := range data {
 				values[i] = item
 			}
 			exprs = append(exprs, clause.IN{Column: key, Values: values})
