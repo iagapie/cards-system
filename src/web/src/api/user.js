@@ -1,7 +1,7 @@
 import { authorization, request } from '../utils/request'
 import { ENDPOINTS } from './endpoints'
 
-export const apiMe = () =>
+export const apiMe = (token) =>
   request()(ENDPOINTS.USER.ME)({
-    headers: authorization,
+    headers: authorization(token),
   })

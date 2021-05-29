@@ -12,8 +12,8 @@ import (
 
 type (
 	LimiterConfig struct {
-		Rate  int           `default:"10"`
-		Burst int           `default:"2"`
+		Rate  int           `default:"30"`
+		Burst int           `default:"4"`
 		TTL   time.Duration `default:"10m"`
 	}
 
@@ -47,7 +47,7 @@ func Limiter(cfg LimiterConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 }
 
 func LimiterWithStore(store LimiterStore, log logrus.FieldLogger) mux.MiddlewareFunc {
-	return func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			identifier := r.Context().Value(ContextIP).(string)
 			if identifier == "" {
@@ -64,7 +64,7 @@ func LimiterWithStore(store LimiterStore, log logrus.FieldLogger) mux.Middleware
 				return
 			}
 
-			h.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 		})
 	}
 }

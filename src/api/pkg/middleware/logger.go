@@ -51,7 +51,7 @@ func Logger(log logrus.FieldLogger, notlogged ...string) mux.MiddlewareFunc {
 		hostname = "unknown"
 	}
 
-	return func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			path := r.URL.Path
 			raw := r.URL.RawQuery
@@ -66,7 +66,7 @@ func Logger(log logrus.FieldLogger, notlogged ...string) mux.MiddlewareFunc {
 			}
 
 			start := time.Now()
-			h.ServeHTTP(&lw, r)
+			next.ServeHTTP(&lw, r)
 			stop := time.Since(start)
 
 			if _, ok := skip[path]; ok {

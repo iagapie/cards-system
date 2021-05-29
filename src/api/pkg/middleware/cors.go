@@ -13,7 +13,7 @@ import (
 type CORSConfig struct {
 	// AllowOrigin defines a list of origins that may access the resource.
 	// Optional. Default value []string{"*"}.
-	AllowOrigins []string `yaml:"allow_origins" json:"allow_origins"`
+	AllowOrigins []string `default:"['*']" yaml:"allow_origins" json:"allow_origins"`
 
 	// AllowOriginFunc is a custom function to validate the origin. It takes the
 	// origin as an argument and returns true if allowed or false otherwise. If
@@ -21,11 +21,6 @@ type CORSConfig struct {
 	// set, AllowOrigins is ignored.
 	// Optional.
 	AllowOriginFunc func(origin string) (bool, error) `yaml:"allow_origin_func" json:"allow_origin_func"`
-
-	// AllowMethods defines a list methods allowed when accessing the resource.
-	// This is used in response to a preflight request.
-	// Optional. Default value DefaultCORSConfig.AllowMethods.
-	AllowMethods []string `yaml:"allow_methods" json:"allow_methods"`
 
 	// AllowHeaders defines a list of request headers that can be used when
 	// making the actual request. This is in response to a preflight request.
@@ -50,19 +45,7 @@ type CORSConfig struct {
 	MaxAge int `default:"0" yaml:"max_age" json:"max_age"`
 }
 
-var DefaultCORSConfig = CORSConfig{
-	AllowOrigins: []string{"*"},
-	AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
-}
-
-func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
-	if len(cfg.AllowOrigins) == 0 {
-		cfg.AllowOrigins = DefaultCORSConfig.AllowOrigins
-	}
-	if len(cfg.AllowMethods) == 0 {
-		cfg.AllowMethods = DefaultCORSConfig.AllowMethods
-	}
-
+func CORS(cfg CORSConfig, router *mux.Router, log logrus.FieldLogger) mux.MiddlewareFunc {
 	var allowOriginPatterns []string
 	for _, origin := range cfg.AllowOrigins {
 		pattern := regexp.QuoteMeta(origin)
@@ -72,13 +55,12 @@ func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 		allowOriginPatterns = append(allowOriginPatterns, pattern)
 	}
 
-	allowMethods := strings.Join(cfg.AllowMethods, ",")
 	allowHeaders := strings.Join(cfg.AllowHeaders, ",")
 	exposeHeaders := strings.Join(cfg.ExposeHeaders, ",")
 	maxAge := strconv.Itoa(cfg.MaxAge)
 
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return func(next http.Handler) http.Handler {
+		cors := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			origin := r.Header.Get(gof.HeaderOrigin)
 			allowOrigin := ""
 
@@ -88,7 +70,7 @@ func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 			// No Origin provided
 			if origin == "" {
 				if !preflight {
-					h.ServeHTTP(w, r)
+					next.ServeHTTP(w, r)
 					return
 				}
 				w.WriteHeader(http.StatusNoContent)
@@ -145,7 +127,7 @@ func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 			// Origin not allowed
 			if allowOrigin == "" {
 				if !preflight {
-					h.ServeHTTP(w, r)
+					next.ServeHTTP(w, r)
 					return
 				}
 				w.WriteHeader(http.StatusNoContent)
@@ -161,7 +143,7 @@ func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 				if exposeHeaders != "" {
 					w.Header().Set(gof.HeaderAccessControlExposeHeaders, exposeHeaders)
 				}
-				h.ServeHTTP(w, r)
+				next.ServeHTTP(w, r)
 				return
 			}
 
@@ -169,7 +151,6 @@ func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 			w.Header().Add(gof.HeaderVary, gof.HeaderAccessControlRequestMethod)
 			w.Header().Add(gof.HeaderVary, gof.HeaderAccessControlRequestHeaders)
 			w.Header().Set(gof.HeaderAccessControlAllowOrigin, allowOrigin)
-			w.Header().Set(gof.HeaderAccessControlAllowMethods, allowMethods)
 			if cfg.AllowCredentials {
 				w.Header().Set(gof.HeaderAccessControlAllowCredentials, "true")
 			}
@@ -187,6 +168,8 @@ func CORS(cfg CORSConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 
 			w.WriteHeader(http.StatusNoContent)
 		})
+
+		return mux.CORSMethodMiddleware(router)(cors)
 	}
 }
 

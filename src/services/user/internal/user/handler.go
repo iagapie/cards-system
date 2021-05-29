@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	usersURL = "/api/v1/users"
-	userURL  = "/api/v1/users/{uuid}"
-	countURL = "/api/v1/users/count"
+	usersURL = "/users"
+	userURL  = "/users/{uuid}"
+	countURL = "/users/count"
 )
 
 type (
@@ -118,7 +118,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	w.Header().Set(gof.HeaderLocation, fmt.Sprintf("%s/%s", usersURL, uuid))
+	w.Header().Set(gof.HeaderLocation, fmt.Sprintf("%s/%s", r.URL.Path, uuid))
 	w.WriteHeader(http.StatusCreated)
 
 	return nil

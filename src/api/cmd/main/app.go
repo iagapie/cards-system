@@ -1,7 +1,7 @@
 package main
 
 import (
-	proxy "github.com/gorilla/handlers"
+	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/iagapie/cards-system/api-service/internal/client/card_service"
 	"github.com/iagapie/cards-system/api-service/internal/client/category_service"
@@ -55,49 +55,54 @@ func main() {
 	log.Infoln("router initializing")
 	router := mux.NewRouter()
 
-	log.Infoln("register middlewares")
-	router.Use(
-		proxy.ProxyHeaders,
-		middleware.IP(),
-		middleware.Logger(log),
-		middleware.Recover(cfg.Recover, log),
-		middleware.Limiter(cfg.Limiter, log),
-		middleware.CORS(cfg.CORS, log),
-	)
-
 	log.Infoln("create and register handlers")
 
+	api := router.PathPrefix("/api").Subrouter()
+
 	metricHandler := metric.Handler{NoHealth: true}
-	metricHandler.Register(router)
+	metricHandler.Register(api)
+
+	v1 := api.PathPrefix("/v1").Subrouter()
 
 	authMiddleware := middleware.JWTAuth(cfg.JWTAuth, log)
 	baseHandler := handlers.Handler{AuthMiddleware: authMiddleware, Log: log}
 
 	userService := user_service.New(cfg.UserService, log)
 	authHandler := auth.Handler{Handler: baseHandler, UserService: userService, TokenManager: jwtTokenManager}
-	authHandler.Register(router)
+	authHandler.Register(v1)
 	usersHandler := users.Handler{Handler: baseHandler, UserService: userService}
-	usersHandler.Register(router)
+	usersHandler.Register(v1)
 
 	spaceService := space_service.New(cfg.SpaceService, log)
 	spacesHandler := spaces.Handler{Handler: baseHandler, SpaceService: spaceService}
-	spacesHandler.Register(router)
+	spacesHandler.Register(v1)
 
 	categoryService := category_service.New(cfg.CategoryService, log)
 	categoriesHandler := categories.Handler{Handler: baseHandler, CategoryService: categoryService}
-	categoriesHandler.Register(router)
+	categoriesHandler.Register(v1)
 
 	tagService := tag_service.New(cfg.TagService, log)
 	tagsHandler := tags.Handler{Handler: baseHandler, TagService: tagService}
-	tagsHandler.Register(router)
+	tagsHandler.Register(v1)
 
 	cardService := card_service.New(cfg.CardService, log)
 	cardsHandler := cards.Handler{Handler: baseHandler, CardService: cardService}
-	cardsHandler.Register(router)
+	cardsHandler.Register(v1)
 
 	fileService := file_service.New(cfg.FileService, log)
 	filesHandler := files.Handler{Handler: baseHandler, FileService: fileService}
-	filesHandler.Register(router)
+	filesHandler.Register(v1)
+
+	log.Infoln("register middlewares")
+	router.Use(
+		gorilla.ProxyHeaders,
+		middleware.IP,
+		middleware.Logger(log),
+		middleware.Recover(cfg.Recover, log),
+		middleware.Limiter(cfg.Limiter, log),
+	)
+	router.Use(middleware.CORS(cfg.CORS, router, log))
+	v1.Use(middleware.CSRF(cfg.CSRF))
 
 	log.Infoln("start application")
 	runner.Run(cfg.Server, log, router)

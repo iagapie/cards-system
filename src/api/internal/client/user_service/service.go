@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/iagapie/cards-system/api-service/pkg/gof"
 	"github.com/iagapie/cards-system/api-service/pkg/rest"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -50,7 +50,7 @@ func (c *client) GetByEmailAndPassword(ctx context.Context, email, password stri
 		return User{}, err
 	}
 	if len(list.Users) != 1 {
-		return User{}, errors.New("user not found")
+		return User{}, gof.ErrNotFound
 	}
 
 	return list.Users[0], nil

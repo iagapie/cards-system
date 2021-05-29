@@ -1,9 +1,18 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 
 import { DocumentTitle } from '../../components/DocumentTitle'
 import { VALIDATION } from '../../constants/validation'
+import { getAuth } from '../../selectors'
+import { login } from '../../slices/auth'
 
 const Login = () => {
+  const { isAuthenticated, loading, error } = useSelector(getAuth)
+
+  const dispatch = useDispatch()
+
   const {
     register,
     handleSubmit,
@@ -11,15 +20,21 @@ const Login = () => {
     reset,
   } = useForm()
 
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      reset()
+    }
+  }, [isAuthenticated, loading, reset])
+
   const onSubmit = (data) => {
-    console.log(data)
-    reset()
+    dispatch(login(data))
   }
 
   return (
     <div>
       <DocumentTitle title="Login" />
-      <h1>Login</h1>
+      <h1>Log in</h1>
+      {error && <div>{error}</div>}
       <form onSubmit={handleSubmit(onSubmit)} noValidate="noValidate">
         <div>
           <label htmlFor="email">Email</label>
@@ -53,7 +68,12 @@ const Login = () => {
             <span role="alert">{errors.password.message}</span>
           )}
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          Log in
+        </button>
+        <div>
+          <Link to="/signup">Sign up for an account</Link>
+        </div>
       </form>
     </div>
   )

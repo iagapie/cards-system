@@ -32,9 +32,9 @@ func (u *User) Update(dto UpdateUserDTO) {
 }
 
 type FilterDTO struct {
-	UUID     []string   `query:"uuid"`
-	Email    []string   `query:"email"`
-	Password *string    `query:"password"`
+	UUID     []string   `query:"uuid" validate:"omitempty,dive,uuid4"`
+	Email    []string   `query:"email" validate:"omitempty,dive,email"`
+	Password *string    `query:"password" validate:"omitempty,min=8,max=64"`
 	Start    *time.Time `query:"start"`
 	End      *time.Time `query:"end"`
 }
@@ -53,7 +53,7 @@ func (f *FilterDTO) ToMap() map[string]interface{} {
 
 type LimitDTO struct {
 	Skip  int64 `query:"skip" validate:"gte=0"`
-	Limit int64 `query:"limit"`
+	Limit int64 `query:"limit" validate:"gte=0,lte=100"`
 }
 
 type CreateUserDTO struct {

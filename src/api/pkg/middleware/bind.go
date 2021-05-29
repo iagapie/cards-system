@@ -16,7 +16,7 @@ func GetModelsFromContext(r *http.Request) []interface{} {
 }
 
 func Bind(binder gof.Binder, log logrus.FieldLogger, i ...interface{}) mux.MiddlewareFunc {
-	return func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			data := make([]interface{}, 0, len(i))
 
@@ -41,7 +41,7 @@ func Bind(binder gof.Binder, log logrus.FieldLogger, i ...interface{}) mux.Middl
 			}
 
 			ctx := context.WithValue(r.Context(), ContextBindModels, data)
-			h.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

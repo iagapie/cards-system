@@ -55,23 +55,25 @@ func main() {
 	log.Infoln("router initializing")
 	router := mux.NewRouter()
 
+	log.Infoln("create and register handlers")
+
+	api := router.PathPrefix("/api").Subrouter()
+
+	metricHandler := metric.Handler{DB: postgres}
+	metricHandler.Register(api)
+
+	v1 := api.PathPrefix("/v1").Subrouter()
+
+	userHandler := user.Handler{Service: service, Log: log}
+	userHandler.Register(v1)
+
 	log.Infoln("register middlewares")
 	router.Use(
 		handlers.ProxyHeaders,
-		middleware.IP(),
+		middleware.IP,
 		middleware.Logger(log),
 		middleware.Recover(cfg.Recover, log),
-		middleware.Limiter(cfg.Limiter, log),
-		middleware.CORS(cfg.CORS, log),
 	)
-
-	log.Infoln("create and register handlers")
-
-	metricHandler := metric.Handler{DB: postgres}
-	metricHandler.Register(router)
-
-	userHandler := user.Handler{Service: service, Log: log}
-	userHandler.Register(router)
 
 	log.Infoln("start application")
 	runner.Run(cfg.Server, log, router)

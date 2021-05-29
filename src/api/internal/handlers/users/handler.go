@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	meURL = "/api/v1/me"
+	meURL = "/me"
 )
 
 type Handler struct {
@@ -19,7 +19,7 @@ type Handler struct {
 }
 
 func (h *Handler) Register(router *mux.Router) {
-	router.Handle(meURL, h.Auth(h.me, user_service.AuthClaimsDTO{})).Methods(http.MethodGet)
+	router.Handle(meURL, h.Auth(h.me, user_service.AuthClaimsDTO{})).Methods(http.MethodGet, http.MethodOptions)
 }
 
 func (h *Handler) me(w http.ResponseWriter, r *http.Request) error {

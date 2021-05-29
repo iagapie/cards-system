@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import { request } from '../utils/request'
 import { ENDPOINTS } from './endpoints'
 
@@ -17,12 +16,5 @@ export const apiRegistration = ({ name, email, password }) =>
       email,
       password,
       repeat_password: password,
-    },
-  })
-
-export const apiRefreshToken = ({ token }) =>
-  request('POST')(ENDPOINTS.AUTH.REFRESH)({
-    data: {
-      token,
     },
   })

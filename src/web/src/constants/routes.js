@@ -2,8 +2,7 @@ export const ROUTES = {
   ROOT: '/',
   AUTH: {
     LOGIN: '/login',
-    REGISTRATION: '/registration',
-    VERIFICATION: '/verification',
+    REGISTRATION: '/signup',
   },
   SPACE: {
     HOME: '/space',

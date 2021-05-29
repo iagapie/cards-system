@@ -72,7 +72,7 @@ func JWTAuth(cfg JWTAuthConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 		extractor = jwtFromForm(parts[1])
 	}
 
-	return func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			raw, httpErr := extractor(r)
 			if httpErr != nil {
@@ -128,7 +128,7 @@ func JWTAuth(cfg JWTAuthConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 			ctx = context.WithValue(ctx, cfg.ContextKey.Claim.ID, claims.ID)
 			ctx = context.WithValue(ctx, cfg.ContextKey.Claim.Subject, claims.Subject)
 
-			h.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

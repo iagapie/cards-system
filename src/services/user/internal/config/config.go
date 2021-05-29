@@ -10,8 +10,6 @@ import (
 type Configuration struct {
 	Server  runner.Config
 	Log     logging.Config
-	CORS    middleware.CORSConfig
-	Limiter middleware.LimiterConfig
 	Recover middleware.RecoverConfig
 	DB      postgresdb.Config
 }

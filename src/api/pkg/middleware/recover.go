@@ -27,7 +27,7 @@ type RecoverConfig struct {
 func Recover(cfg RecoverConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 	cfg.StackSize = cfg.StackSize << 10 // KB
 
-	return func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				if r := recover(); r != nil {
@@ -47,7 +47,7 @@ func Recover(cfg RecoverConfig, log logrus.FieldLogger) mux.MiddlewareFunc {
 					}
 				}
 			}()
-			h.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 		})
 	}
 }

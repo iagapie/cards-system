@@ -12,6 +12,7 @@ type Configuration struct {
 	Server          runner.Config
 	Log             logging.Config
 	CORS            middleware.CORSConfig
+	CSRF            middleware.CSRFConfig
 	Limiter         middleware.LimiterConfig
 	Recover         middleware.RecoverConfig
 	JWTAuth         middleware.JWTAuthConfig `yaml:"jwt_auth" json:"jwt_auth"`

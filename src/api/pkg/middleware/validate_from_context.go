@@ -15,7 +15,7 @@ type ErrorField struct {
 
 func ValidateFromContext(contextKey string, log logrus.FieldLogger) mux.MiddlewareFunc {
 	v := validator.New()
-	return func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if data, ok := r.Context().Value(contextKey).([]interface{}); ok {
 				for _, item := range data {
@@ -33,7 +33,7 @@ func ValidateFromContext(contextKey string, log logrus.FieldLogger) mux.Middlewa
 				}
 			}
 
-			h.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 		})
 	}
 }

@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	signUpURL  = "/api/v1/sign-up"
-	signInURL  = "/api/v1/sign-in"
-	refreshURL = "/api/v1/refresh"
+	signUpURL  = "/sign-up"
+	signInURL  = "/sign-in"
+	refreshURL = "/refresh"
 )
 
 type Handler struct {
@@ -23,9 +23,9 @@ type Handler struct {
 }
 
 func (h *Handler) Register(router *mux.Router) {
-	router.Handle(signUpURL, h.Middleware(h.SignUp, user_service.CreateUserDTO{})).Methods(http.MethodPost)
-	router.Handle(signInURL, h.Middleware(h.SignIn, user_service.SignInDTO{})).Methods(http.MethodPost)
-	router.Handle(refreshURL, h.Middleware(h.Refresh, user_service.RefreshTokenDTO{})).Methods(http.MethodPost)
+	router.Handle(signUpURL, h.Middleware(h.SignUp, user_service.CreateUserDTO{})).Methods(http.MethodPost, http.MethodOptions)
+	router.Handle(signInURL, h.Middleware(h.SignIn, user_service.SignInDTO{})).Methods(http.MethodPost, http.MethodOptions)
+	router.Handle(refreshURL, h.Middleware(h.Refresh, user_service.RefreshTokenDTO{})).Methods(http.MethodPost, http.MethodOptions)
 }
 
 func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) error {

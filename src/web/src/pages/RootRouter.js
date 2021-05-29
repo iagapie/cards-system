@@ -5,7 +5,7 @@ import { ROUTES } from '../constants/routes'
 import { Loader } from '../components/Loader'
 import { DocumentTitle } from '../components/DocumentTitle'
 import { ErrorWrapper } from '../components/ErrorWrapper'
-import { PrivateRoute } from '../components/Router'
+import { PrivateRoute, PublicRoute } from '../components/Router'
 
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './Home'))
 const Login = lazy(() => import(/* webpackChunkName: "login" */ './Auth/Login'))
@@ -23,12 +23,12 @@ const RootRouter = () => (
       <Route exact path={ROUTES.ROOT}>
         <Home />
       </Route>
-      <Route exact path={ROUTES.AUTH.LOGIN}>
+      <PublicRoute exact path={ROUTES.AUTH.LOGIN}>
         <Login />
-      </Route>
-      <Route exact path={ROUTES.AUTH.REGISTRATION}>
+      </PublicRoute>
+      <PublicRoute exact path={ROUTES.AUTH.REGISTRATION}>
         <Registration />
-      </Route>
+      </PublicRoute>
       <PrivateRoute path={ROUTES.SPACE.HOME}>
         <SpaceRouter />
       </PrivateRoute>

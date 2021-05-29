@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	HeartbeatURL = "/api/heartbeat"
-	PingURL      = "/api/ping"
-	HealthURL    = "/api/health"
+	HeartbeatURL = "/heartbeat"
+	PingURL      = "/ping"
+	HealthURL    = "/health"
 
 	StatusGreen  = "green"
 	StatusOrange = "orange"

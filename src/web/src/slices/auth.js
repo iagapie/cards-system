@@ -4,7 +4,7 @@ export const initialState = {
   currentUser: {},
   isAuthenticated: false,
   error: '',
-  loading: true,
+  loading: false,
 }
 
 const authSlice = createSlice({
@@ -36,6 +36,13 @@ const authSlice = createSlice({
       state.error = ''
       state.loading = false
     },
+    registration: (state) => {
+      state.loading = true
+    },
+    registrationError: (state, { payload }) => {
+      state.error = payload
+      state.loading = false
+    },
   },
 })
 
@@ -46,6 +53,8 @@ export const {
   loginError,
   logout,
   logoutSuccess,
+  registration,
+  registrationError,
 } = authSlice.actions
 
 export default authSlice.reducer
