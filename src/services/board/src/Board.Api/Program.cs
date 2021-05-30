@@ -7,8 +7,13 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Formatting.Compact;
 using Board.Api;
+using Board.Api.Extensions;
+using Board.Api.Infrastructure;
+using Board.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 
 var configuration = GetConfiguration();
 Log.Logger = CreateSerilogLogger(configuration);
@@ -16,6 +21,16 @@ try
 {
     Log.Information("Configuring web host ({ApplicationContext})...", Program.AppName);
     var host = BuildHost(configuration, args);
+
+    Log.Information("Applying migrations ({ApplicationContext})...", Program.AppName);
+    host.MigrateDbContext<BoardContext>((context, services) =>
+    {
+        var logger = services.GetService<ILogger<BoardContextSeed>>();
+
+        new BoardContextSeed()
+            .SeedAsync(context, logger)
+            .Wait();
+    });
 
     Log.Information("Starting web host ({ApplicationContext})...", Program.AppName);
     host.Run();

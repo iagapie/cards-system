@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Board.Api.Controllers
 {
-    [Route("api/v1/boards")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class BoardController : ControllerBase
+    public class MembersController : ControllerBase
     {
-        
     }
 }

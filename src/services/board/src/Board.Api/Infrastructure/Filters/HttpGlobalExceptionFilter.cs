@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Board.Api.Infrastructure.ActionResults;
+using Board.Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Board.Api.Infrastructure.Filters
 {
@@ -20,22 +23,41 @@ namespace Board.Api.Infrastructure.Filters
 
         public void OnException(ExceptionContext context)
         {
-            _logger.LogError(new EventId(context.Exception.HResult),
+            _logger.LogError(
+                new EventId(context.Exception.HResult),
                 context.Exception,
                 context.Exception.Message);
 
-            var json = new JsonErrorResponse
+            if (context.Exception.GetType() == typeof(BoardDomainException))
             {
-                Messages = new[] {"An error occurred. Try it again."}
-            };
+                var problemDetails = new ValidationProblemDetails()
+                {
+                    Instance = context.HttpContext.Request.Path,
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Please refer to the errors property for additional details."
+                };
 
-            if (_env.IsDevelopment())
+                problemDetails.Errors.Add("DomainValidations", new[] {context.Exception.Message});
+
+                context.Result = new BadRequestObjectResult(problemDetails);
+                context.HttpContext.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+            }
+            else
             {
-                json.DeveloperMessage = context.Exception;
+                var json = new JsonErrorResponse
+                {
+                    Messages = new[] {"An error occurred. Try it again."}
+                };
+
+                if (_env.IsDevelopment())
+                {
+                    json.DeveloperMessage = context.Exception;
+                }
+
+                context.Result = new InternalServerErrorObjectResult(json);
+                context.HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
             }
 
-            context.Result = new InternalServerErrorObjectResult(json);
-            context.HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
             context.ExceptionHandled = true;
         }
     }
