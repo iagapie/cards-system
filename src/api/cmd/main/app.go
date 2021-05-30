@@ -3,19 +3,19 @@ package main
 import (
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/iagapie/cards-system/api-service/internal/client/board_service"
 	"github.com/iagapie/cards-system/api-service/internal/client/card_service"
 	"github.com/iagapie/cards-system/api-service/internal/client/category_service"
 	"github.com/iagapie/cards-system/api-service/internal/client/file_service"
-	"github.com/iagapie/cards-system/api-service/internal/client/space_service"
 	"github.com/iagapie/cards-system/api-service/internal/client/tag_service"
 	"github.com/iagapie/cards-system/api-service/internal/client/user_service"
 	"github.com/iagapie/cards-system/api-service/internal/config"
 	"github.com/iagapie/cards-system/api-service/internal/handlers"
 	"github.com/iagapie/cards-system/api-service/internal/handlers/auth"
+	"github.com/iagapie/cards-system/api-service/internal/handlers/boards"
 	"github.com/iagapie/cards-system/api-service/internal/handlers/cards"
 	"github.com/iagapie/cards-system/api-service/internal/handlers/categories"
 	"github.com/iagapie/cards-system/api-service/internal/handlers/files"
-	"github.com/iagapie/cards-system/api-service/internal/handlers/spaces"
 	"github.com/iagapie/cards-system/api-service/internal/handlers/tags"
 	"github.com/iagapie/cards-system/api-service/internal/handlers/users"
 	"github.com/iagapie/cards-system/api-service/pkg/cache/freecache"
@@ -73,9 +73,9 @@ func main() {
 	usersHandler := users.Handler{Handler: baseHandler, UserService: userService}
 	usersHandler.Register(v1)
 
-	spaceService := space_service.New(cfg.SpaceService, log)
-	spacesHandler := spaces.Handler{Handler: baseHandler, SpaceService: spaceService}
-	spacesHandler.Register(v1)
+	boardService := board_service.New(cfg.BoardService, log)
+	boardsHandler := boards.Handler{Handler: baseHandler, BoardService: boardService}
+	boardsHandler.Register(v1)
 
 	categoryService := category_service.New(cfg.CategoryService, log)
 	categoriesHandler := categories.Handler{Handler: baseHandler, CategoryService: categoryService}

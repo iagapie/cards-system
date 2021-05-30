@@ -18,7 +18,7 @@ type Configuration struct {
 	JWTAuth         middleware.JWTAuthConfig `yaml:"jwt_auth" json:"jwt_auth"`
 	JWTToken        manager.JWTTokenConfig   `yaml:"jwt_token" json:"jwt_token"`
 	UserService     rest.Config              `yaml:"user_service" json:"user_service"`
-	SpaceService    rest.Config              `yaml:"space_service" json:"space_service"`
+	BoardService    rest.Config              `yaml:"board_service" json:"board_service"`
 	CategoryService rest.Config              `yaml:"category_service" json:"category_service"`
 	TagService      rest.Config              `yaml:"tag_service" json:"tag_service"`
 	CardService     rest.Config              `yaml:"card_service" json:"card_service"`

@@ -12,8 +12,8 @@ const Login = lazy(() => import(/* webpackChunkName: "login" */ './Auth/Login'))
 const Registration = lazy(() =>
   import(/* webpackChunkName: "registration" */ './Auth/Registration'),
 )
-const SpaceRouter = lazy(() =>
-  import(/* webpackChunkName: "spaceRouter" */ './Space/SpaceRouter'),
+const BoardRouter = lazy(() =>
+  import(/* webpackChunkName: "boardRouter" */ './Board/BoardRouter'),
 )
 
 const RootRouter = () => (
@@ -29,8 +29,8 @@ const RootRouter = () => (
       <PublicRoute exact path={ROUTES.AUTH.REGISTRATION}>
         <Registration />
       </PublicRoute>
-      <PrivateRoute path={ROUTES.SPACE.HOME}>
-        <SpaceRouter />
+      <PrivateRoute path={ROUTES.BOARD.HOME}>
+        <BoardRouter />
       </PrivateRoute>
       <Route exact path={ROUTES.ERROR.NOT_FOUND}>
         <ErrorWrapper text="404 Page not found" />

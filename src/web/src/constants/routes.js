@@ -4,8 +4,8 @@ export const ROUTES = {
     LOGIN: '/login',
     REGISTRATION: '/signup',
   },
-  SPACE: {
-    HOME: '/space',
+  BOARD: {
+    HOME: '/board',
   },
   ERROR: {
     NOT_FOUND: '/404',

@@ -13,7 +13,7 @@ type CSRFConfig struct {
 	Key            string        `required:"true"`
 	TrustedOrigins []string      `yaml:"trusted_origins" json:"trusted_origins"`
 	HeaderName     string        `default:"x-csrf-token" yaml:"header_name" json:"header_name"`
-	CookieName     string        `default:"_cards_api_csrf" yaml:"cookie_name" json:"cookie_name"`
+	CookieName     string        `default:"_csrf" yaml:"cookie_name" json:"cookie_name"`
 	MaxAge         time.Duration `default:"12h" yaml:"max_age" json:"max_age"`
 	Domain         string
 	Path           string

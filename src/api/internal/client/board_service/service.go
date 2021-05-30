@@ -1,4 +1,4 @@
-package space_service
+package board_service
 
 import (
 	"github.com/iagapie/cards-system/api-service/pkg/rest"
@@ -6,16 +6,16 @@ import (
 	"net/http"
 )
 
-var _ SpaceService = &client{}
+var _ BoardService = &client{}
 
-type SpaceService interface {
+type BoardService interface {
 }
 
 type client struct {
 	request rest.Request
 }
 
-func New(cfg rest.Config, log *logrus.Entry) SpaceService {
+func New(cfg rest.Config, log *logrus.Entry) BoardService {
 	return &client{
 		request: rest.Request{
 			Cfg:    cfg,

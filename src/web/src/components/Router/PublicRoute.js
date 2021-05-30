@@ -11,7 +11,7 @@ export const PublicRoute = ({ children: Component, ...rest }) => {
   return (
     <Route
       render={() =>
-        !isAuthenticated ? Component : <Redirect to={ROUTES.SPACE.HOME} />
+        !isAuthenticated ? Component : <Redirect to={ROUTES.BOARD.HOME} />
       }
       {...rest}
     />
