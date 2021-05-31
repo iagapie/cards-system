@@ -40,11 +40,11 @@ namespace Board.Api
                 .AddCustomIntegrations()
                 .AddCustomConfiguration();
         }
-        
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new MediatorModule());
-            builder.RegisterModule(new ApplicationModule());
+            builder.RegisterModule(new ApplicationModule(Configuration["ConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,7 +94,7 @@ namespace Board.Api
         public static IServiceCollection AddCustomConfiguration(this IServiceCollection services)
         {
             services.AddOptions();
-            
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -108,7 +108,7 @@ namespace Board.Api
 
                     return new BadRequestObjectResult(problemDetails)
                     {
-                        ContentTypes = { "application/problem+json", "application/problem+xml" }
+                        ContentTypes = {"application/problem+json", "application/json"}
                     };
                 };
             });
@@ -142,7 +142,7 @@ namespace Board.Api
             services.AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                    // options.Filters.Add(typeof(ValidateModelStateFilter));
+                    options.Filters.Add(typeof(ValidateModelStateFilter));
                 })
                 .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
 

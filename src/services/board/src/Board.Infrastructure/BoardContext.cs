@@ -15,7 +15,6 @@ namespace Board.Infrastructure
     public sealed class BoardContext : DbContext, IUnitOfWork
     {
         public DbSet<Domain.AggregatesModel.BoardAggregate.Board> Boards { get; set; }
-        public DbSet<Visibility> Visibilities { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Role> Roles { get; set; }
 
@@ -40,7 +39,6 @@ namespace Board.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new RoleEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new VisibilityEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new MemberEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new BoardEntityTypeConfiguration());
         }

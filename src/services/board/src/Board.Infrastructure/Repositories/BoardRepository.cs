@@ -16,11 +16,11 @@ namespace Board.Infrastructure.Repositories
         public BoardRepository(BoardContext context) =>
             _context = context ?? throw new ArgumentNullException(nameof(context));
 
-        public Domain.AggregatesModel.BoardAggregate.Board Add(Domain.AggregatesModel.BoardAggregate.Board board) =>
-            _context.Boards.Add(board).Entity;
+        public void Add(Domain.AggregatesModel.BoardAggregate.Board board) => _context.Boards.Add(board);
 
-        public Domain.AggregatesModel.BoardAggregate.Board Update(Domain.AggregatesModel.BoardAggregate.Board board) =>
-            _context.Boards.Update(board).Entity;
+        public void Update(Domain.AggregatesModel.BoardAggregate.Board board) => _context.Boards.Update(board);
+
+        public void Remove(Domain.AggregatesModel.BoardAggregate.Board board) => _context.Boards.Remove(board);
 
         public async Task<Domain.AggregatesModel.BoardAggregate.Board> GetAsync(Guid boardId)
         {
@@ -31,8 +31,7 @@ namespace Board.Infrastructure.Repositories
 
             if (board == null) return null;
             
-            await _context.Entry(board).Reference(i => i.Visibility).LoadAsync();
-            await _context.Entry(board).Collection(i => i.Members).LoadAsync();
+            await _context.Entry(board).Collection(i => i.Members).Query().Include(x => x.Role).LoadAsync();
 
             return board;
         }

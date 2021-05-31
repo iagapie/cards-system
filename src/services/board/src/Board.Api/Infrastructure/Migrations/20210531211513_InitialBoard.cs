@@ -8,6 +8,22 @@ namespace Board.Api.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "boards",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", maxLength: 36, nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    owner_id = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_boards", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "roles",
                 columns: table => new
                 {
@@ -17,41 +33,6 @@ namespace Board.Api.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_roles", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "visibilities",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false, defaultValue: 10),
-                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_visibilities", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "boards",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", maxLength: 36, nullable: false),
-                    visibility_id = table.Column<int>(type: "integer", nullable: false),
-                    description = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: true),
-                    name = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
-                    owner_id = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_boards", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_boards_visibilities_visibility_id",
-                        column: x => x.visibility_id,
-                        principalTable: "visibilities",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,6 +64,11 @@ namespace Board.Api.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_boards_created_at",
+                table: "boards",
+                column: "created_at");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_boards_owner_id",
                 table: "boards",
                 column: "owner_id");
@@ -91,11 +77,6 @@ namespace Board.Api.Infrastructure.Migrations
                 name: "IX_boards_updated_at",
                 table: "boards",
                 column: "updated_at");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_boards_visibility_id",
-                table: "boards",
-                column: "visibility_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_members_board_id_user_id_role_id",
@@ -129,9 +110,6 @@ namespace Board.Api.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "roles");
-
-            migrationBuilder.DropTable(
-                name: "visibilities");
         }
     }
 }

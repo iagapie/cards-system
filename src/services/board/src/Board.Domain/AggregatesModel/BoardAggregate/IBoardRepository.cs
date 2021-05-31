@@ -6,9 +6,11 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
 {
     public interface IBoardRepository : IRepository<Board>
     {
-        Board Add(Board board);
+        void Add(Board board);
 
-        Board Update(Board board);
+        void Update(Board board);
+        
+        void Remove(Board board);
 
         Task<Board> GetAsync(Guid boardId);
     }

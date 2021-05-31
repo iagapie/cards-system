@@ -28,27 +28,14 @@ namespace Board.Infrastructure.EntityConfigurations
                 .Property<string>("_name")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("name")
-                .HasMaxLength(36)
+                .HasMaxLength(150)
                 .IsRequired();
             
             builder
                 .Property<string>("_description")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("description")
-                .HasMaxLength(36)
                 .IsRequired(false);
-            
-            builder
-                .Property<int>("_visibilityId")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("visibility_id")
-                .IsRequired();
-
-            builder
-                .HasOne(e => e.Visibility)
-                .WithMany()
-                .HasForeignKey("_visibilityId")
-                .OnDelete(DeleteBehavior.Cascade);
             
             builder
                 .Metadata
@@ -56,6 +43,7 @@ namespace Board.Infrastructure.EntityConfigurations
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasIndex("_ownerId");
+            builder.HasIndex(e => e.CreatedAt);
             builder.HasIndex(e => e.UpdatedAt);
         }
     }

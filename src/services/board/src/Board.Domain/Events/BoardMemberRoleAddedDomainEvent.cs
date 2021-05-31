@@ -4,12 +4,12 @@ using MediatR;
 
 namespace Board.Domain.Events
 {
-    public class BoardMemberAddedDomainEvent : INotification
+    public class BoardMemberRoleAddedDomainEvent : INotification
     {
         public Guid BoardId { get; }
         public Member Member { get; }
 
-        public BoardMemberAddedDomainEvent(Guid boardId, Member member)
+        public BoardMemberRoleAddedDomainEvent(Guid boardId, Member member)
         {
             BoardId = boardId;
             Member = member;

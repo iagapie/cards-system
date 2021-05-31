@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Board.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(BoardContext))]
-    [Migration("20210530210142_InitialBoard")]
+    [Migration("20210531211513_InitialBoard")]
     partial class InitialBoard
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,14 +37,13 @@ namespace Board.Api.Infrastructure.Migrations
                         .HasColumnName("updated_at");
 
                     b.Property<string>("_description")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<string>("_name")
                         .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
                         .HasColumnName("name");
 
                     b.Property<string>("_ownerId")
@@ -53,17 +52,13 @@ namespace Board.Api.Infrastructure.Migrations
                         .HasColumnType("character varying(36)")
                         .HasColumnName("owner_id");
 
-                    b.Property<int>("_visibilityId")
-                        .HasColumnType("integer")
-                        .HasColumnName("visibility_id");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("UpdatedAt");
 
                     b.HasIndex("_ownerId");
-
-                    b.HasIndex("_visibilityId");
 
                     b.ToTable("boards");
                 });
@@ -127,35 +122,6 @@ namespace Board.Api.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("roles");
-                });
-
-            modelBuilder.Entity("Board.Domain.AggregatesModel.BoardAggregate.Visibility", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer")
-                        .HasDefaultValue(10)
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("visibilities");
-                });
-
-            modelBuilder.Entity("Board.Domain.AggregatesModel.BoardAggregate.Board", b =>
-                {
-                    b.HasOne("Board.Domain.AggregatesModel.BoardAggregate.Visibility", "Visibility")
-                        .WithMany()
-                        .HasForeignKey("_visibilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Visibility");
                 });
 
             modelBuilder.Entity("Board.Domain.AggregatesModel.BoardAggregate.Member", b =>

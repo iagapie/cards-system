@@ -8,10 +8,7 @@ namespace Board.Api.Infrastructure.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.ModelState.IsValid)
-            {
-                return;
-            }
+            if (context.ModelState.IsValid) return;
 
             var validationErrors = context.ModelState
                 .Keys

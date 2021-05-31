@@ -4,7 +4,6 @@ using System.Linq;
 using Board.Domain.Events;
 using Board.Domain.Exceptions;
 using Board.Domain.SeedWork;
-using static Board.Domain.AggregatesModel.BoardAggregate.Visibility;
 
 namespace Board.Domain.AggregatesModel.BoardAggregate
 {
@@ -16,28 +15,27 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
 
         private string _description;
 
-        public Visibility Visibility { get; private set; }
-        private int _visibilityId;
-
         private readonly List<Member> _members;
         public IReadOnlyCollection<Member> Members => _members;
 
         protected Board() => _members = new List<Member>();
 
-        public Board(Guid id, string name, string ownerId, Visibility visibility, string description) : this()
+        public Board(Guid id, string name, string ownerId, string description) : this()
         {
             Id = id;
             _name = name;
             _ownerId = ownerId;
-            _visibilityId = visibility.Id;
             _description = description;
             _members.Add(new Member(Guid.NewGuid(), ownerId, Role.Owner));
 
             AddDomainEvent(new BoardCreatedDomainEvent(this));
         }
 
-        public void AddMember(string userId, Role role)
+        public void AddMemberRole(string userId, Role role)
         {
+            if (string.Equals(_ownerId, userId, StringComparison.InvariantCultureIgnoreCase))
+                throw new BoardDomainException($"User {userId} is already a member.");
+            
             if (Role.Owner.Equals(role)) throw new BoardDomainException("Role Owner couldn't be added.");
             
             if (_members.Any(x => x.GetUserId() == userId && x.GetRoleId() == role.Id)) return;
@@ -45,29 +43,33 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
             var member = new Member(Guid.NewGuid(), userId, role);
             _members.Add(member);
 
-            AddDomainEvent(new BoardMemberAddedDomainEvent(Id, member));
+            AddDomainEvent(new BoardMemberRoleAddedDomainEvent(Id, member));
         }
 
-        public void RemoveMember(string userId, Role role)
+        public void RemoveMemberRole(string userId, Role role)
         {
-            if (Role.Owner.Equals(role)) throw new BoardDomainException("Role Owner couldn't be removed.");
+            if (string.Equals(_ownerId, userId, StringComparison.InvariantCultureIgnoreCase))
+                throw new BoardDomainException($"User {userId} is owner and role couldn't be removed.");
             
             bool Predicate(Member x) => x.GetUserId() == userId && x.GetRoleId() == role.Id;
 
             var member = _members.Find(Predicate);
 
             if (member != null && _members.RemoveAll(Predicate) > 0)
-                AddDomainEvent(new BoardMembersRemovedDomainEvent(Id, new[] {member}));
+                AddDomainEvent(new BoardMemberRolesRemovedDomainEvent(Id, new[] {member}));
         }
 
-        public void RemoveMembers(string userId)
+        public void RemoveMember(string userId)
         {
-            bool Predicate(Member x) => Role.Owner.Id != x.GetRoleId() && x.GetUserId() == userId;
+            if (string.Equals(_ownerId, userId, StringComparison.InvariantCultureIgnoreCase))
+                throw new BoardDomainException($"User {userId} is owner and couldn't be removed.");
+            
+            bool Predicate(Member x) => x.GetUserId() == userId;
 
             var members = _members.FindAll(Predicate);
 
             if (members.Any() && _members.RemoveAll(Predicate) > 0)
-                AddDomainEvent(new BoardMembersRemovedDomainEvent(Id, members));
+                AddDomainEvent(new BoardMemberRolesRemovedDomainEvent(Id, members));
         }
 
         public string GetOwnerId() => _ownerId;
@@ -91,35 +93,6 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
             _description = description;
 
             AddDomainEvent(new BoardDescriptionChangedDomainEvent(Id, description));
-        }
-
-        public int GetVisibilityId() => _visibilityId;
-
-        public void MakePublic()
-        {
-            if (_visibilityId == Public.Id) return;
-
-            _visibilityId = Public.Id;
-
-            AddDomainEvent(new BoardVisibilityChangedToPublicDomainEvent(Id));
-        }
-
-        public void MakePrivate()
-        {
-            if (_visibilityId == Private.Id) return;
-
-            _visibilityId = Private.Id;
-
-            AddDomainEvent(new BoardVisibilityChangedToPrivateDomainEvent(Id));
-        }
-
-        public void MakeGroupVisible()
-        {
-            if (_visibilityId == Group.Id) return;
-
-            _visibilityId = Group.Id;
-
-            AddDomainEvent(new BoardVisibilityChangedToGroupDomainEvent(Id));
         }
     }
 }

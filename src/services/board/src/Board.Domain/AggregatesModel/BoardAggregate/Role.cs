@@ -8,32 +8,32 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
 {
     public class Role : Enumeration
     {
-        public static Role Owner = new(0, nameof(Owner).ToLowerInvariant());
+        public static Role Owner = new(0, nameof(Owner));
         
         /// <summary>
         /// View Board Cards
         /// </summary>
-        public static Role View = new(10, nameof(View).ToLowerInvariant());
+        public static Role View = new(10, nameof(View));
 
         /// <summary>
         /// Create Card
         /// </summary>
-        public static Role Create = new(20, nameof(Create).ToLowerInvariant());
+        public static Role Create = new(20, nameof(Create));
 
         /// <summary>
         /// Edit Own Card
         /// </summary>
-        public static Role Edit = new(30, nameof(Edit).ToLowerInvariant());
+        public static Role Edit = new(30, nameof(Edit));
 
         /// <summary>
         /// Remove Own Card
         /// </summary>
-        public static Role Remove = new(40, nameof(Remove).ToLowerInvariant());
+        public static Role Remove = new(40, nameof(Remove));
 
         /// <summary>
-        /// Extends all roles + apply roles on non personal cards (like an owner)
+        /// Extends all roles + apply roles on non personal cards (like owner)
         /// </summary>
-        public static Role Moderator = new(50, nameof(Moderator).ToLowerInvariant());
+        public static Role Moderator = new(50, nameof(Moderator));
 
         public Role(int id, string name) : base(id, name)
         {

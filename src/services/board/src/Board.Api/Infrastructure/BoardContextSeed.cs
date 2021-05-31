@@ -29,13 +29,6 @@ namespace Board.Api.Infrastructure
 
                         await context.SaveChangesAsync();
                     }
-
-                    if (!context.Visibilities.Any())
-                    {
-                        context.Visibilities.AddRange(Visibility.List());
-
-                        await context.SaveChangesAsync();
-                    }
                 }
             });
         }
