@@ -1,0 +1,72 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  CategoryService\Api\Controller\:
+    resource: '%kernel.project_dir%/src/Api/Controller/'
+
+  Symfony\Component\Stopwatch\Stopwatch:
+    class: Symfony\Component\Stopwatch\Stopwatch
+    arguments:
+      $morePrecision: true
+
+  Laminas\HttpHandlerRunner\Emitter\EmitterInterface:
+    class: Laminas\HttpHandlerRunner\Emitter\SapiStreamEmitter
+
+  Nyholm\Psr7Server\ServerRequestCreatorInterface:
+    class: Nyholm\Psr7Server\ServerRequestCreator
+
+  psr17_factory:
+    class: Nyholm\Psr7\Factory\Psr17Factory
+
+  Psr\Http\Message\RequestFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\ResponseFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\ServerRequestFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\StreamFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\UploadedFileFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\UriFactoryInterface:
+    alias: psr17_factory
+
+  default_handler:
+    class: CategoryService\Api\Infrastructure\RequestHandler\DefaultHandler
+
+  CategoryService\Api\Infrastructure\Middleware\ErrorMiddleware:
+    class: CategoryService\Api\Infrastructure\Middleware\ErrorMiddleware
+    arguments:
+      $debug: '%kernel.debug%'
+
+  CategoryService\Api\Infrastructure\Middleware\ContentLengthMiddleware: ~
+
+  CategoryService\Api\Infrastructure\Middleware\Rfc2616Sec94Middleware: ~
+
+  CategoryService\Api\Infrastructure\Middleware\JsonContentTypeMiddleware: ~
+
+  CategoryService\Api\Infrastructure\Middleware\BodyParsingMiddleware: ~
+
+  CategoryService\Api\Infrastructure\RequestHandler\MiddlewareChainHandler:
+    class: CategoryService\Api\Infrastructure\RequestHandler\MiddlewareChainHandler
+    arguments:
+      $defaultHandler: '@default_handler'
+    calls:
+      - [ add, [ '@CategoryService\Api\Infrastructure\Middleware\BodyParsingMiddleware' ] ]
+      - [ add, [ '@CategoryService\Api\Infrastructure\Middleware\Rfc2616Sec94Middleware' ] ]
+      - [ add, [ '@CategoryService\Api\Infrastructure\Middleware\ContentLengthMiddleware' ] ]
+      - [ add, [ '@CategoryService\Api\Infrastructure\Middleware\JsonContentTypeMiddleware' ] ]
+      - [ add, [ '@CategoryService\Api\Infrastructure\Middleware\ErrorMiddleware' ] ]
+      - [ add, [ '@IA\Route\RouteMiddleware' ] ]
+      - [ add, [ '@CategoryService\Api\Infrastructure\Middleware\RouteMiddleware' ] ]
+
+  Psr\Http\Server\RequestHandlerInterface:
+    alias: CategoryService\Api\Infrastructure\RequestHandler\MiddlewareChainHandler

@@ -1,10 +1,9 @@
 .env
+.env.local.php
 /var/cache/*
 /var/logs/*
-/var/sessions/*
 !var/cache/.gitignore
 !var/logs/.gitignore
-!var/sessions/.gitignore
 /bin/*
 !bin/console
 /phpunit.xml
