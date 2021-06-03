@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace CategoryService\Api\Infrastructure\Middleware;
 
+use CategoryService\Api\Infrastructure\Exception\HttpBadRequestException;
+use CategoryService\Api\Infrastructure\Exception\HttpConflictException;
 use CategoryService\Api\Infrastructure\Exception\HttpException;
+use CategoryService\Api\Infrastructure\Exception\HttpNotFoundException;
 use CategoryService\Api\Infrastructure\Exception\HttpTeapotException;
+use CategoryService\Domain\Exception\DomainException;
+use CategoryService\Domain\Exception\RecordConflictException;
+use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,6 +20,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
+
+use function json_encode;
 
 final class ErrorMiddleware implements MiddlewareInterface
 {
@@ -55,7 +63,15 @@ final class ErrorMiddleware implements MiddlewareInterface
         $this->logger->error('Error Middleware handle exception', ['exception' => $exception]);
 
         if (!$exception instanceof HttpException) {
-            $exception = new HttpTeapotException(previous: $exception);
+            if ($exception instanceof RecordNotFoundException) {
+                $exception = new HttpNotFoundException(previous: $exception);
+            } elseif ($exception instanceof RecordConflictException) {
+                $exception = new HttpConflictException($exception->getConflict(), previous: $exception);
+            } elseif ($exception instanceof DomainException) {
+                $exception = new HttpBadRequestException(previous: $exception);
+            } else {
+                $exception = new HttpTeapotException(previous: $exception);
+            }
         }
 
         $data = $exception->getData();
@@ -71,7 +87,7 @@ final class ErrorMiddleware implements MiddlewareInterface
             $data['code'] = $exception->getCode();
         }
 
-        $body = $this->streamFactory->createStream(\json_encode($data));
+        $body = $this->streamFactory->createStream(json_encode($data));
 
         return $this->responseFactory->createResponse($exception->getStatusCode())->withBody($body);
     }

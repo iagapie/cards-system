@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  CategoryService\Api\Application\Command\CreateCategory\CreateCategoryHandlerInterface:
+    class: CategoryService\Api\Application\Command\CreateCategory\CreateCategoryHandler
+
+  CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryHandlerInterface:
+    class: CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryHandler
+
+  CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryHandlerInterface:
+    class: CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryHandler

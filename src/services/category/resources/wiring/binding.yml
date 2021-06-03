@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  CategoryService\Api\Infrastructure\Bind\Resolver\ReflectionResolver: ~
+  CategoryService\Api\Infrastructure\Bind\Resolver\ResourceResolver: ~
+  CategoryService\Api\Infrastructure\Bind\Resolver\QueryResolver: ~
+  CategoryService\Api\Infrastructure\Bind\Resolver\BodyResolver: ~
+  CategoryService\Api\Infrastructure\Bind\Resolver\RouteParamResolver: ~
+  CategoryService\Api\Infrastructure\Bind\Resolver\RequestAttributeResolver: ~
+  CategoryService\Api\Infrastructure\Bind\Resolver\HeaderResolver: ~

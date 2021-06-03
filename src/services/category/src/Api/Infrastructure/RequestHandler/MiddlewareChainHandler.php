@@ -8,28 +8,20 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Traversable;
+
+use function array_reduce;
+use function iterator_to_array;
 
 final class MiddlewareChainHandler implements RequestHandlerInterface
 {
     /**
-     * @var MiddlewareInterface[]
-     */
-    private array $chain = [];
-
-    /**
      * MiddlewareChain constructor.
      * @param RequestHandlerInterface $defaultHandler
+     * @param iterable<MiddlewareInterface> $middlewares
      */
-    public function __construct(public RequestHandlerInterface $defaultHandler)
+    public function __construct(private RequestHandlerInterface $defaultHandler, private iterable $middlewares)
     {
-    }
-
-    /**
-     * @param MiddlewareInterface $middleware
-     */
-    public function add(MiddlewareInterface $middleware): void
-    {
-        $this->chain[] = $middleware;
     }
 
     /**
@@ -38,12 +30,14 @@ final class MiddlewareChainHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $chain = $this->defaultHandler;
+        $middlewares = $this->middlewares instanceof Traversable
+            ? iterator_to_array($this->middlewares)
+            : $this->middlewares;
 
-        for ($i = count($this->chain) - 1; $i >= 0; --$i) {
-            $chain = new MiddlewareHandler($this->chain[$i], $chain);
-        }
-
-        return $chain->handle($request);
+        return array_reduce(
+            $middlewares,
+            fn($carry, $item) => new MiddlewareHandler($item, $carry),
+            $this->defaultHandler
+        )->handle($request);
     }
 }

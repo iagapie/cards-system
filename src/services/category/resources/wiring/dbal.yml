@@ -6,10 +6,7 @@ services:
 
   Doctrine\Common\EventManager: ~
 
-  Doctrine\DBAL\Configuration:
-    class: Doctrine\DBAL\Configuration
-    calls:
-      - [ setAutoCommit, [ false ] ]
+  Doctrine\DBAL\Configuration: ~
 
   Doctrine\DBAL\Connection:
     factory: [ 'Doctrine\DBAL\DriverManager', 'getConnection' ]
@@ -21,11 +18,9 @@ services:
     class: Doctrine\DBAL\Tools\Console\ConnectionProvider\SingleConnectionProvider
 
   Doctrine\DBAL\Tools\Console\Command\RunSqlCommand:
-    class: Doctrine\DBAL\Tools\Console\Command\RunSqlCommand
     tags:
       - { name: 'console.command', command: 'dbal:run-sql' }
 
   Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand:
-    class: Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand
     tags:
       - { name: 'console.command', command: 'dbal:reserved-words' }

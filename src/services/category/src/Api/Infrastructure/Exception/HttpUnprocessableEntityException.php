@@ -6,6 +6,8 @@ namespace CategoryService\Api\Infrastructure\Exception;
 
 use Throwable;
 
+use function array_merge;
+
 final class HttpUnprocessableEntityException extends HttpException
 {
     /**
@@ -35,6 +37,6 @@ final class HttpUnprocessableEntityException extends HttpException
      */
     public function getData(): array
     {
-        return [...parent::getData(), ...$this->errors];
+        return array_merge(parent::getData(), ['errors' => $this->errors]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CategoryService\Api\Infrastructure\RequestHandler;
 
+use CategoryService\Api\Infrastructure\Bind\Resolver\ReflectionResolver;
 use CategoryService\Api\Infrastructure\Exception\HttpNotFoundException;
 use IA\Route\Resolver\Result;
 use IA\Route\RouteInterface;
@@ -13,15 +14,21 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionException;
 use ReflectionMethod;
-use ReflectionNamedType;
+
+use function array_key_exists;
+use function array_map;
+use function explode;
 
 final class DefaultHandler implements RequestHandlerInterface
 {
+    public const ACTION_CONTEXT = 'ACTION_CONTEXT';
+
     /**
      * DefaultHandler constructor.
      * @param ContainerInterface $container
+     * @param ReflectionResolver $reflectionHelper
      */
-    public function __construct(private ContainerInterface $container)
+    public function __construct(private ContainerInterface $container, private ReflectionResolver $reflectionHelper)
     {
     }
 
@@ -38,77 +45,52 @@ final class DefaultHandler implements RequestHandlerInterface
         /** @var RouteInterface $route */
         $route = $request->getAttribute(RouteInterface::class);
 
-        [$serviceId, $method] = \explode('::', $route->getHandler());
+        [$serviceId, $method] = explode('::', $route->getHandler());
+
+        if (!$this->container->has($serviceId)) {
+            throw new HttpNotFoundException();
+        }
 
         $reflectionMethod = new ReflectionMethod($serviceId, $method);
 
-        $chain = new MiddlewareChainHandler(
-            new class ($this, $reflectionMethod, $serviceId, $result->getArguments()) implements RequestHandlerInterface {
-                public function __construct(
-                    private DefaultHandler $defaultHandler,
-                    private ReflectionMethod $reflectionMethod,
-                    private string $serviceId,
-                    private array $arguments
-                ) {
-                }
-
-                public function handle(ServerRequestInterface $request): ResponseInterface
-                {
-                    return $this->defaultHandler->invoke($request, $this->reflectionMethod, $this->serviceId, $this->arguments);
-                }
-            }
-        );
-
-        foreach ($route->getMiddlewares() as $middleware) {
-            $chain->add($this->container->get($middleware));
-        }
-
-        return $chain->handle($request);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ReflectionMethod $reflectionMethod
-     * @param string $serviceId
-     * @param array $arguments
-     * @return ResponseInterface
-     * @throws ReflectionException
-     */
-    public function invoke(
-        ServerRequestInterface $request,
-        ReflectionMethod $reflectionMethod,
-        string $serviceId,
-        array $arguments
-    ): ResponseInterface {
-        if (!$this->container->has($serviceId)) {
-            throw new HttpNotFoundException($request);
-        }
-
-        $parameters = [];
+        $routeArgs = $result->getArguments();
+        $arguments = [];
+        $refs = [];
 
         foreach ($reflectionMethod->getParameters() as $parameter) {
-            if ($parameter->hasType() && $parameter->getType() instanceof ReflectionNamedType) {
-                if (\is_a($parameter->getType()->getName(), ServerRequestInterface::class, true)) {
-                    $parameters[$parameter->getName()] = $request;
-                    continue;
-                }
+            $name = $parameter->getName();
 
-                if ($this->container->has($parameter->getType()->getName())) {
-                    $parameters[$parameter->getName()] = $this->container->get($parameter->getType()->getName());
-                    continue;
-                }
-            }
+            $refs[$name] = $parameter;
 
-            if (\array_key_exists($parameter->getName(), $arguments)) {
-                $parameters[$parameter->getName()] = $arguments[$parameter->getName()];
+            if (array_key_exists($name, $routeArgs)) {
+                $arguments[$name] = $routeArgs[$name];
                 continue;
             }
 
-            $parameters[$parameter->getName()] = null;
+            $arguments[$name] = $this->reflectionHelper->resolveByReflection($parameter, $request);
         }
 
-        $service = $this->container->get($serviceId);
+        $ctx = new ActionContext(
+            fn($args) => $reflectionMethod->invokeArgs($this->container->get($serviceId), $args),
+            $refs,
+            $arguments
+        );
 
-        return $reflectionMethod->invokeArgs($service, $parameters);
+        $request = $request->withAttribute(self::ACTION_CONTEXT, $ctx);
+
+        $chain = new MiddlewareChainHandler(
+            new class implements RequestHandlerInterface {
+                public function handle(ServerRequestInterface $request): ResponseInterface
+                {
+                    /** @var ActionContext $ctx */
+                    $ctx = $request->getAttribute(DefaultHandler::ACTION_CONTEXT);
+
+                    return $ctx->getAction()($ctx->getArguments());
+                }
+            },
+            array_map(fn($item) => $this->container->get($item), $route->getMiddlewares())
+        );
+
+        return $chain->handle($request);
     }
 }

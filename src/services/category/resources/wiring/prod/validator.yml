@@ -4,14 +4,16 @@ services:
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
     public: true
 
+  validator_cache:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      $namespace: 'validator'
+      $directory: '%kernel.cache_dir%'
+    calls:
+      - [ setLogger, [ '@logger' ] ]
+
   validator_factory:
     class: Symfony\Component\Validator\ValidatorBuilder
     calls:
       - [ enableAnnotationMapping, [ true ] ]
-
-  validator:
-    class: Symfony\Component\Validator\Validator\ValidatorInterface
-    factory: [ '@validator_factory', 'getValidator' ]
-
-  Symfony\Component\Validator\Validator\ValidatorInterface:
-    alias: validator
+      - [ setMappingCache, [ '@validator_cache' ] ]

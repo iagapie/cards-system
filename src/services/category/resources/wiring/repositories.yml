@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  CategoryService\Infrastructure\Mapper\CategoryMapperInterface:
+    class: CategoryService\Infrastructure\Mapper\CategoryMapper
+
+  CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface:
+    class: CategoryService\Infrastructure\Repository\CategoryRepository

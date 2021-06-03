@@ -5,7 +5,6 @@ services:
     public: false
 
   Symfony\Component\Console\Application:
-    class: Symfony\Component\Console\Application
     public: true
     arguments:
       $name: '%kernel.name%'
