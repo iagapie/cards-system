@@ -24,7 +24,6 @@ interface CategoryRepositoryInterface
 
     /**
      * @param Category $category
-     * @throws RecordConflictException
      */
     public function update(Category $category): void;
 

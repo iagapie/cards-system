@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace CategoryService\Domain\AggregateModel\CategoryAggregate;
 
+use CategoryService\Domain\Exception\RecordConflictException;
+
+use CategoryService\Domain\Exception\RecordNotFoundException;
+
+use function array_key_exists;
 use function array_keys;
+use function sprintf;
 
 final class Category
 {
@@ -122,17 +128,30 @@ final class Category
 
     /**
      * @param string $permission
+     * @throws RecordConflictException
      */
     public function addPermission(string $permission): void
     {
+        if (array_key_exists($permission, $this->permissions)) {
+            throw new RecordConflictException(
+                sprintf('Unique constraint violation: %s - %s.', $this->id, $permission)
+            );
+        }
+
         $this->permissions[$permission] = true;
     }
 
     /**
      * @param string $permission
+     * @throws RecordNotFoundException
      */
     public function removePermission(string $permission): void
     {
+        if (!array_key_exists($permission, $this->permissions)) {
+            throw new RecordNotFoundException(
+                sprintf('Permission "%s" for "%s" not found.', $permission, $this->id)
+            );
+        }
         unset($this->permissions[$permission]);
     }
 }

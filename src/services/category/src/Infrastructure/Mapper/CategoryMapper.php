@@ -6,6 +6,7 @@ namespace CategoryService\Infrastructure\Mapper;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\Category;
 
+use function array_filter;
 use function explode;
 
 final class CategoryMapper implements CategoryMapperInterface
@@ -25,7 +26,10 @@ final class CategoryMapper implements CategoryMapperInterface
             (int)$row['position']
         );
 
-        foreach (explode(' ', $row['permissions'] ?? '') as $permission) {
+        $permissions = explode(' ', $row['permissions'] ?? '');
+        $permissions = array_filter($permissions);
+
+        foreach ($permissions as $permission) {
             $category->addPermission($permission);
         }
 

@@ -20,6 +20,7 @@ use IA\Route\Attribute\Post;
 use IA\Route\Attribute\Prefix;
 use IA\Route\Attribute\Put;
 use IA\Route\Generator\UrlGeneratorInterface;
+use JsonSerializable;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,11 +39,11 @@ final class CategoryController
         private ResponseFactoryInterface $responseFactory,
         private StreamFactoryInterface $streamFactory,
         private UrlGeneratorInterface $urlGenerator,
-        private LoggerInterface $logger,
         private CreateCategoryHandlerInterface $createCategoryHandler,
         private UpdateCategoryHandlerInterface $updateCategoryHandler,
         private RemoveCategoryHandlerInterface $removeCategoryHandler,
         private CategoryQueryInterface $query,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -51,7 +52,7 @@ final class CategoryController
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $data = [];
+        $data = $this->query->getCategories(0, 10);
 
         return $this->response($data);
     }
@@ -61,13 +62,13 @@ final class CategoryController
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $data = [$id];
+        $data = $this->query->getCategory($id);
 
         return $this->response($data);
     }
 
     #[Post]
-    public function createCategory(
+    public function create(
         ServerRequestInterface $request,
         #[BindResource, Validate] CreateCategoryCommand $command
     ): ResponseInterface {
@@ -83,7 +84,7 @@ final class CategoryController
     }
 
     #[Put('/{id}')]
-    public function updateCategory(#[BindResource, Validate] UpdateCategoryCommand $command): ResponseInterface
+    public function update(#[BindResource, Validate] UpdateCategoryCommand $command): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
@@ -93,7 +94,7 @@ final class CategoryController
     }
 
     #[Delete('/{id:'.self::UUID_REGEX.'}')]
-    public function removeCategory(string $id): ResponseInterface
+    public function remove(string $id): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
@@ -104,10 +105,10 @@ final class CategoryController
     }
 
     /**
-     * @param array $data
+     * @param JsonSerializable $data
      * @return ResponseInterface
      */
-    private function response(array $data): ResponseInterface
+    private function response(JsonSerializable $data): ResponseInterface
     {
         return $this->responseFactory
             ->createResponse()

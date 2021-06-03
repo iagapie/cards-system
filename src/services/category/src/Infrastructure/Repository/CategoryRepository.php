@@ -20,8 +20,8 @@ use function sprintf;
 
 final class CategoryRepository implements CategoryRepositoryInterface
 {
-    public const CATEGORIES = 'categories';
-    public const PERMISSIONS = 'permissions';
+    private const CATEGORIES = 'categories';
+    private const PERMISSIONS = 'permissions';
 
     public function __construct(private Connection $connection, private CategoryMapperInterface $categoryMapper)
     {

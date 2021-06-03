@@ -12,3 +12,9 @@ services:
 
   CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryHandlerInterface:
     class: CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryHandler
+
+  CategoryService\Api\Application\Command\AddPermission\AddPermissionHandlerInterface:
+    class: CategoryService\Api\Application\Command\AddPermission\AddPermissionHandler
+
+  CategoryService\Api\Application\Command\RemovePermission\RemovePermissionHandlerInterface:
+    class: CategoryService\Api\Application\Command\RemovePermission\RemovePermissionHandler

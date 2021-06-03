@@ -9,7 +9,6 @@ interface UpdateCategoryHandlerInterface
 {
     /**
      * @param UpdateCategoryCommand $command
-     * @throws RecordConflictException
      * @throws RecordNotFoundException
      */
     public function handle(UpdateCategoryCommand $command): void;
