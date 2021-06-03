@@ -25,6 +25,18 @@ final class UpdateCategoryHandler implements UpdateCategoryHandlerInterface
      */
     public function handle(UpdateCategoryCommand $command): void
     {
-        // TODO: Implement handle() method.
+        $category = $this->categoryRepository->get($command->getId());
+
+        $category->setParentId($command->getParentId());
+        $category->setName($command->getName());
+        $category->setDescription($command->getDescription());
+        $category->setPosition($command->getPosition());
+
+        $this->logger->info('----- Updating category: {id} - {parentId}', [
+            'id' => $category->getId(),
+            'parentId' => $category->getParentId(),
+        ]);
+
+        $this->categoryRepository->update($category);
     }
 }

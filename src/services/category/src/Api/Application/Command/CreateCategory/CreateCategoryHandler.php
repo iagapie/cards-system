@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CategoryService\Api\Application\Command\CreateCategory;
 
+use CategoryService\Domain\AggregateModel\CategoryAggregate\Category;
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
@@ -25,6 +26,21 @@ final class CreateCategoryHandler implements CreateCategoryHandlerInterface
      */
     public function handle(CreateCategoryCommand $command): void
     {
-        // TODO: Implement handle() method.
+        $category = new Category(
+            $command->getId(),
+            $command->getParentId(),
+            $command->getBoardId(),
+            $command->getCreatedBy(),
+            $command->getName(),
+            $command->getDescription(),
+            $command->getPosition()
+        );
+
+        $this->logger->info('----- Creating category: {id} - {parentId}', [
+            'id' => $category->getId(),
+            'parentId' => $category->getParentId(),
+        ]);
+
+        $this->categoryRepository->create($category);
     }
 }

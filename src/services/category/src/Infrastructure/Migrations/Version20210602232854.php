@@ -24,7 +24,7 @@ final class Version20210602232854 extends AbstractMigration
                 category_id VARCHAR(36) NOT NULL,
                 permission VARCHAR(50) NOT NULL,
                 PRIMARY KEY(category_id, permission),
-                FOREIGN KEY (category_id) REFERENCES categories(id)
+                FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE NO ACTION ON DELETE CASCADE
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         ');
     }

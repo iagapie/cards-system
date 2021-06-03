@@ -25,6 +25,13 @@ final class RemoveCategoryHandler implements RemoveCategoryHandlerInterface
      */
     public function handle(RemoveCategoryCommand $command): void
     {
-        // TODO: Implement handle() method.
+        $category = $this->categoryRepository->get($command->getId());
+
+        $this->logger->info('----- Removing category: {id} - {parentId}', [
+            'id' => $category->getId(),
+            'parentId' => $category->getParentId(),
+        ]);
+
+        $this->categoryRepository->remove($category);
     }
 }
