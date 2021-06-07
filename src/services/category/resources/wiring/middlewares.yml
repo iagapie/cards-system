@@ -26,10 +26,6 @@ services:
     tags:
       - { name: 'app.middleware', priority: 50 }
 
-  CategoryService\Api\Infrastructure\Middleware\TransactionMiddleware:
-    tags:
-      - { name: 'app.middleware', priority: 60 }
-
   IA\Route\RouteMiddleware:
     tags:
       - { name: 'app.middleware', priority: 90 }

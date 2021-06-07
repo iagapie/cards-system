@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace CategoryService\Api\Application\Command\AddPermission;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
+use CategoryService\Domain\Exception\RecordConflictException;
+use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Log\LoggerInterface;
 
-final class AddPermissionHandler implements AddPermissionHandlerInterface
+final class AddPermissionHandler
 {
     /**
      * AddPermissionHandler constructor.
@@ -21,7 +23,9 @@ final class AddPermissionHandler implements AddPermissionHandlerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param AddPermissionCommand $command
+     * @throws RecordConflictException
+     * @throws RecordNotFoundException
      */
     public function handle(AddPermissionCommand $command): void
     {

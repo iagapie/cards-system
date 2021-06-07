@@ -1,0 +1,28 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  mediator:
+    class: CategoryService\Api\Infrastructure\Mediator\Mediator
+    arguments:
+      - !tagged_iterator mediator.behavior
+
+  CategoryService\Api\Infrastructure\Mediator\MediatorInterface:
+    alias: mediator
+
+  CategoryService\Api\Infrastructure\Mediator\SenderInterface:
+    alias: mediator
+
+  CategoryService\Api\Infrastructure\Mediator\Behavior\ValidatorBehavior:
+    tags:
+      - { name: 'mediator.behavior', priority: 10 }
+
+  CategoryService\Api\Infrastructure\Mediator\Behavior\TransactionBehavior:
+    tags:
+      - { name: 'mediator.behavior', priority: 20 }
+
+  CategoryService\Api\Infrastructure\Mediator\Behavior\RequestHandlerBehavior:
+    tags:
+      - { name: 'mediator.behavior', priority: 1000 }

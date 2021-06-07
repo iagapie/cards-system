@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CategoryService\Api\Application\Command\AddPermission;
 
-use CategoryService\Api\Infrastructure\Bind\Attribute\FromRoute;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -12,11 +11,9 @@ use Symfony\Component\Validator\Constraints\Uuid;
 
 final class AddPermissionCommand
 {
-    #[FromRoute]
     #[NotBlank, Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
     private string $categoryId;
 
-    #[FromRoute]
     #[NotBlank, Length(max: 50), Regex('/^[\-\w]+$/')]
     private string $permission;
 

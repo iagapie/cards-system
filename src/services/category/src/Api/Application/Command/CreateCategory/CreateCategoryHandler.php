@@ -6,9 +6,10 @@ namespace CategoryService\Api\Application\Command\CreateCategory;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\Category;
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
+use CategoryService\Domain\Exception\RecordConflictException;
 use Psr\Log\LoggerInterface;
 
-final class CreateCategoryHandler implements CreateCategoryHandlerInterface
+final class CreateCategoryHandler
 {
     /**
      * CreateCategoryHandler constructor.
@@ -22,7 +23,8 @@ final class CreateCategoryHandler implements CreateCategoryHandlerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param CreateCategoryCommand $command
+     * @throws RecordConflictException
      */
     public function handle(CreateCategoryCommand $command): void
     {

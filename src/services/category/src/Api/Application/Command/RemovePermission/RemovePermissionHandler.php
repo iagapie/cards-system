@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace CategoryService\Api\Application\Command\RemovePermission;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
+use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Log\LoggerInterface;
 
-final class RemovePermissionHandler implements RemovePermissionHandlerInterface
+final class RemovePermissionHandler
 {
     /**
      * RemovePermissionHandler constructor.
@@ -21,7 +22,8 @@ final class RemovePermissionHandler implements RemovePermissionHandlerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param RemovePermissionCommand $command
+     * @throws RecordNotFoundException
      */
     public function handle(RemovePermissionCommand $command): void
     {

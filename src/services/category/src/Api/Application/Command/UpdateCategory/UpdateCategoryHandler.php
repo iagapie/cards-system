@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace CategoryService\Api\Application\Command\UpdateCategory;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
+use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Log\LoggerInterface;
 
-final class UpdateCategoryHandler implements UpdateCategoryHandlerInterface
+final class UpdateCategoryHandler
 {
     /**
      * UpdateCategoryHandler constructor.
@@ -21,7 +22,8 @@ final class UpdateCategoryHandler implements UpdateCategoryHandlerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param UpdateCategoryCommand $command
+     * @throws RecordNotFoundException
      */
     public function handle(UpdateCategoryCommand $command): void
     {

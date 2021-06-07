@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CategoryService\Api\Application\Command\CreateCategory;
 
-use CategoryService\Api\Infrastructure\Bind\Attribute\FromBody;
-use Ramsey\Uuid\Uuid as RUuid;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
@@ -13,31 +11,26 @@ use Symfony\Component\Validator\Constraints\Uuid;
 
 final class CreateCategoryCommand
 {
+    #[NotBlank, Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
     private string $id;
 
-    #[FromBody]
-    #[NotBlank, Length(max: 150)]
-    private string $name;
+    #[Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
+    private ?string $parentId;
 
-    #[FromBody]
-    #[Length(max: 1000)]
-    private ?string $description;
-
-    #[FromBody]
     #[NotBlank, Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
     private string $boardId;
 
-    #[FromBody]
+    #[NotBlank, Length(max: 150)]
+    private string $name;
+
+    #[Length(max: 1000)]
+    private ?string $description;
+
     #[NotBlank, Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
     private string $createdBy;
 
-    #[FromBody]
     #[Range(min: -1000, max: 1000)]
     private int $position;
-
-    #[FromBody]
-    #[Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
-    private ?string $parentId;
 
     /**
      * CreateCategoryCommand constructor.
@@ -50,33 +43,21 @@ final class CreateCategoryCommand
      * @param string $id
      */
     public function __construct(
+        string $id,
+        ?string $parentId,
+        string $boardId,
         string $name,
         ?string $description,
-        string $boardId,
         string $createdBy,
-        int $position = 0,
-        ?string $parentId = null,
-        string $id = RUuid::NIL
+        int $position,
     ) {
         $this->id = $id;
-
+        $this->parentId = $parentId;
+        $this->boardId = $boardId;
         $this->name = $name;
         $this->description = $description;
-        $this->boardId = $boardId;
         $this->createdBy = $createdBy;
         $this->position = $position;
-        $this->parentId = $parentId;
-    }
-
-    /**
-     * @param string $id
-     * @return self
-     */
-    public function withId(string $id): self
-    {
-        $clone = clone $this;
-        $clone->id = $id;
-        return $clone;
     }
 
     /**
@@ -85,6 +66,22 @@ final class CreateCategoryCommand
     public function getId(): string
     {
         return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getParentId(): ?string
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBoardId(): string
+    {
+        return $this->boardId;
     }
 
     /**
@@ -106,14 +103,6 @@ final class CreateCategoryCommand
     /**
      * @return string
      */
-    public function getBoardId(): string
-    {
-        return $this->boardId;
-    }
-
-    /**
-     * @return string
-     */
     public function getCreatedBy(): string
     {
         return $this->createdBy;
@@ -125,13 +114,5 @@ final class CreateCategoryCommand
     public function getPosition(): int
     {
         return $this->position;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getParentId(): ?string
-    {
-        return $this->parentId;
     }
 }

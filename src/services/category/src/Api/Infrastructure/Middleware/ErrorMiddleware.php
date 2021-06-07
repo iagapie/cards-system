@@ -9,6 +9,8 @@ use CategoryService\Api\Infrastructure\Exception\HttpConflictException;
 use CategoryService\Api\Infrastructure\Exception\HttpException;
 use CategoryService\Api\Infrastructure\Exception\HttpNotFoundException;
 use CategoryService\Api\Infrastructure\Exception\HttpTeapotException;
+use CategoryService\Api\Infrastructure\Exception\HttpUnprocessableEntityException;
+use CategoryService\Api\Infrastructure\Mediator\Exception\ValidatorException;
 use CategoryService\Domain\Exception\DomainException;
 use CategoryService\Domain\Exception\RecordConflictException;
 use CategoryService\Domain\Exception\RecordNotFoundException;
@@ -69,6 +71,8 @@ final class ErrorMiddleware implements MiddlewareInterface
                 $exception = new HttpConflictException($exception->getConflict(), previous: $exception);
             } elseif ($exception instanceof DomainException) {
                 $exception = new HttpBadRequestException(previous: $exception);
+            } elseif ($exception instanceof ValidatorException) {
+                $exception = new HttpUnprocessableEntityException($exception->getErrors(), previous: $exception);
             } else {
                 $exception = new HttpTeapotException(previous: $exception);
             }

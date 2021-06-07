@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace CategoryService\Api\Application\Command\RemoveCategory;
 
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Uuid;
+
 final class RemoveCategoryCommand
 {
+    #[NotBlank, Uuid(versions: [Uuid::V4_RANDOM], strict: true)]
     private string $id;
 
     /**

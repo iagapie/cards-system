@@ -5,15 +5,10 @@ declare(strict_types=1);
 namespace CategoryService\Api\Controller;
 
 use CategoryService\Api\Application\Command\CreateCategory\CreateCategoryCommand;
-use CategoryService\Api\Application\Command\CreateCategory\CreateCategoryHandlerInterface;
 use CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryCommand;
-use CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryHandlerInterface;
 use CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryCommand;
-use CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryHandlerInterface;
 use CategoryService\Api\Application\Query\CategoryQueryInterface;
-use CategoryService\Api\Infrastructure\Bind\Attribute\BindResource;
-use CategoryService\Api\Infrastructure\Middleware\Attribute\Validate;
-use CategoryService\Api\Infrastructure\Middleware\ParameterValidatorMiddleware;
+use CategoryService\Api\Infrastructure\Mediator\MediatorInterface;
 use IA\Route\Attribute\Delete;
 use IA\Route\Attribute\Get;
 use IA\Route\Attribute\Post;
@@ -30,25 +25,32 @@ use Ramsey\Uuid\Uuid;
 
 use function json_encode;
 
-#[Prefix('/api/v1/categories', ParameterValidatorMiddleware::class)]
+#[Prefix('/api/v1/categories')]
 final class CategoryController
 {
     public const UUID_REGEX = '(?i)[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}';
 
+    /**
+     * CategoryController constructor.
+     * @param ResponseFactoryInterface $responseFactory
+     * @param StreamFactoryInterface $streamFactory
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param MediatorInterface $mediator
+     * @param CategoryQueryInterface $query
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         private ResponseFactoryInterface $responseFactory,
         private StreamFactoryInterface $streamFactory,
         private UrlGeneratorInterface $urlGenerator,
-        private CreateCategoryHandlerInterface $createCategoryHandler,
-        private UpdateCategoryHandlerInterface $updateCategoryHandler,
-        private RemoveCategoryHandlerInterface $removeCategoryHandler,
+        private MediatorInterface $mediator,
         private CategoryQueryInterface $query,
         private LoggerInterface $logger,
     ) {
     }
 
     #[Get]
-    public function all(): ResponseInterface
+    public function all(ServerRequestInterface $request): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
@@ -57,7 +59,7 @@ final class CategoryController
         return $this->response($data);
     }
 
-    #[Get('/{id:'.self::UUID_REGEX.'}', 'category-one')]
+    #[Get('/{id:'.self::UUID_REGEX.'}', 'category')]
     public function one(string $id): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
@@ -68,27 +70,45 @@ final class CategoryController
     }
 
     #[Post]
-    public function create(
-        ServerRequestInterface $request,
-        #[BindResource, Validate] CreateCategoryCommand $command
-    ): ResponseInterface {
+    public function create(ServerRequestInterface $request): ResponseInterface
+    {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $command = $command->withId(Uuid::uuid4()->toString());
+        $data = (array)$request->getParsedBody();
 
-        $this->createCategoryHandler->handle($command);
+        $command = new CreateCategoryCommand(
+            Uuid::uuid4()->toString(),
+            $data['parentId'] ?? null,
+            $data['boardId'] ?? '',
+            $data['name'] ?? '',
+            $data['description'] ?? null,
+            $data['createdBy'] ?? '',
+            (int)($data['position'] ?? 0),
+        );
 
-        $location = $this->urlGenerator->absolute($request->getUri(), 'category-one', ['id' => $command->getId()]);
+        $this->mediator->send($command);
+
+        $location = $this->urlGenerator->absolute($request->getUri(), 'category', ['id' => $command->getId()]);
 
         return $this->responseFactory->createResponse(201)->withHeader('Location', $location);
     }
 
     #[Put('/{id}')]
-    public function update(#[BindResource, Validate] UpdateCategoryCommand $command): ResponseInterface
+    public function update(ServerRequestInterface $request, string $id): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $this->updateCategoryHandler->handle($command);
+        $data = (array)$request->getParsedBody();
+
+        $command = new UpdateCategoryCommand(
+            $id,
+            $data['parentId'] ?? null,
+            $data['name'] ?? '',
+            $data['description'] ?? null,
+            (int)($data['position'] ?? 0),
+        );
+
+        $this->mediator->send($command);
 
         return $this->responseFactory->createResponse(204);
     }
@@ -99,7 +119,8 @@ final class CategoryController
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
         $command = new RemoveCategoryCommand($id);
-        $this->removeCategoryHandler->handle($command);
+
+        $this->mediator->send($command);
 
         return $this->responseFactory->createResponse(204);
     }

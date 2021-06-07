@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace CategoryService\Api\Application\Command\RemoveCategory;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
+use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Log\LoggerInterface;
 
-final class RemoveCategoryHandler implements RemoveCategoryHandlerInterface
+final class RemoveCategoryHandler
 {
     /**
      * RemoveCategoryHandler constructor.
@@ -21,7 +22,8 @@ final class RemoveCategoryHandler implements RemoveCategoryHandlerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param RemoveCategoryCommand $command
+     * @throws RecordNotFoundException
      */
     public function handle(RemoveCategoryCommand $command): void
     {
