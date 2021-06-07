@@ -17,9 +17,9 @@ interface CategoryQueryInterface
     public function getCategory(string $id): JsonSerializable;
 
     /**
-     * @param int $skip
-     * @param int $limit
+     * @param Criteria $criteria
+     * @param Range $range
      * @return JsonSerializable
      */
-    public function getCategories(int $skip, int $limit): JsonSerializable;
+    public function getCategories(Criteria $criteria, Range $range): JsonSerializable;
 }

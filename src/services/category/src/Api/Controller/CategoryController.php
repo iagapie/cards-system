@@ -8,6 +8,8 @@ use CategoryService\Api\Application\Command\CreateCategory\CreateCategoryCommand
 use CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryCommand;
 use CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryCommand;
 use CategoryService\Api\Application\Query\CategoryQueryInterface;
+use CategoryService\Api\Application\Query\Criteria;
+use CategoryService\Api\Application\Query\Range;
 use CategoryService\Api\Infrastructure\Mediator\MediatorInterface;
 use IA\Route\Attribute\Delete;
 use IA\Route\Attribute\Get;
@@ -50,17 +52,27 @@ final class CategoryController
     }
 
     #[Get]
-    public function all(ServerRequestInterface $request): ResponseInterface
+    public function getList(ServerRequestInterface $request): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $data = $this->query->getCategories(0, 10);
+        $params = $request->getQueryParams();
+
+        $criteria = new Criteria(
+            (array)($params['category'] ?? []),
+            $params['parent'] ?? null,
+            $params['board'] ?? null,
+        );
+
+        $range = new Range((int)($params['skip'] ?? 0), (int)($params['limit'] ?? 0));
+
+        $data = $this->query->getCategories($criteria, $range);
 
         return $this->response($data);
     }
 
     #[Get('/{id:'.self::UUID_REGEX.'}', 'category')]
-    public function one(string $id): ResponseInterface
+    public function get(string $id): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 

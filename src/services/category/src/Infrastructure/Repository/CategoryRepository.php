@@ -33,7 +33,7 @@ final class CategoryRepository implements CategoryRepositoryInterface
     public function get(string $id): Category
     {
         $sql = '
-            SELECT c.*, GROUP_CONCAT(p.permission SEPARATOR \' \') as permissions
+            SELECT c.*, GROUP_CONCAT(p.permission SEPARATOR \' \') AS permissions
             FROM '.self::CATEGORIES.' c
             LEFT JOIN '.self::PERMISSIONS.' p ON p.category_id = c.id
             WHERE c.id = :id

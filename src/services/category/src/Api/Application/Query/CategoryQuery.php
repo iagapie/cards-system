@@ -11,8 +11,10 @@ use JsonSerializable;
 
 use function array_filter;
 use function array_key_exists;
+use function array_map;
 use function array_merge;
 use function explode;
+use function strtoupper;
 
 final class CategoryQuery implements CategoryQueryInterface
 {
@@ -33,21 +35,12 @@ final class CategoryQuery implements CategoryQueryInterface
     public function getCategory(string $id): JsonSerializable
     {
         $sql = '
-            SELECT
-                c.id,
-                c.parent_id,
-                c.board_id,
-                c.created_by,
-                c.name,
-                c.description,
-                c.position,
-                c.created_at,
-                c.updated_at,
-                GROUP_CONCAT(p.permission SEPARATOR \' \') as permissions
+            SELECT c.*, GROUP_CONCAT(p.permission SEPARATOR \' \') AS permissions
             FROM '.self::CATEGORIES.' c
             LEFT JOIN '.self::PERMISSIONS.' p ON p.category_id = c.id
-            WHERE c.id = :id OR c.parentId = :id
+            WHERE c.id = :id OR c.parent_id = :id
             GROUP BY c.id
+            ORDER BY c.position ASC, c.updated_at DESC
         ';
 
         $rows = $this->connection->fetchAllAssociativeIndexed($sql, ['id' => $id]);
@@ -57,6 +50,7 @@ final class CategoryQuery implements CategoryQueryInterface
         }
 
         $row = $this->normalize($rows[$id], ['id' => $id, 'children' => []]);
+
         unset($rows[$id]);
 
         foreach ($rows as $key => $value) {
@@ -78,12 +72,53 @@ final class CategoryQuery implements CategoryQueryInterface
     /**
      * {@inheritDoc}
      */
-    public function getCategories(int $skip, int $limit): JsonSerializable
+    public function getCategories(Criteria $criteria, Range $range): JsonSerializable
     {
-        return new class implements JsonSerializable {
+        $params = [];
+        $types = [];
+
+        $qb = $this->connection->createQueryBuilder()
+            ->select('c.*', 'GROUP_CONCAT(p.permission SEPARATOR \' \') AS permissions')
+            ->from(self::CATEGORIES, 'c')
+            ->leftJoin('c', self::PERMISSIONS, 'p', 'p.category_id = c.id')
+            ->where('1 = 1')
+            ->groupBy('c.id')
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('c.updated_at', 'DESC')
+            ->setMaxResults($range->getLimit())
+            ->setFirstResult($range->getSkip());
+
+        if ($criteria->getIds()) {
+            $qb->andWhere('c.id IN (?)');
+            $params[] = $criteria->getIds();
+            $types[0] = Connection::PARAM_STR_ARRAY;
+        }
+
+        if ($criteria->getParentId()) {
+            if ('NULL' === strtoupper($criteria->getParentId())) {
+                $qb->andWhere('c.parent_id IS NULL');
+            } else {
+                $qb->andWhere('c.parent_id = ?');
+                $params[] = $criteria->getParentId();
+            }
+        }
+
+        if ($criteria->getBoardId()) {
+            $qb->andWhere('c.board_id = ?');
+            $params[] = $criteria->getBoardId();
+        }
+
+        $rows = $qb->setParameters($params, $types)->fetchAllAssociative();
+        $rows = array_map(fn ($row) => $this->normalize($row), $rows);
+
+        return new class($rows) implements JsonSerializable {
+            public function __construct(private array $rows)
+            {
+            }
+
             public function jsonSerialize(): array
             {
-                return [];
+                return ['categories' => $this->rows];
             }
         };
     }
@@ -93,7 +128,7 @@ final class CategoryQuery implements CategoryQueryInterface
      * @param array $append
      * @return array
      */
-    private function normalize(array $row, array $append): array
+    private function normalize(array $row, array $append = []): array
     {
         $ca = new DateTimeImmutable($row['created_at']);
         $ua = new DateTimeImmutable($row['updated_at']);
@@ -102,9 +137,12 @@ final class CategoryQuery implements CategoryQueryInterface
         $permissions = array_filter($permissions);
 
         return array_merge(
-            $row,
             [
+                'id' => $row['id'] ?? '',
                 'parentId' => $row['parent_id'] ?: null,
+                'boardId' => $row['board_id'],
+                'createdBy' => $row['created_by'],
+                'name' => $row['name'],
                 'description' => $row['description'] ?: null,
                 'position' => (int)$row['position'],
                 'createdAt' => $ca->format('c'),
