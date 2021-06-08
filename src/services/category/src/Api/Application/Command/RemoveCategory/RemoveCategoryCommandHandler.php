@@ -8,7 +8,7 @@ use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryIn
 use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Log\LoggerInterface;
 
-final class RemoveCategoryHandler
+final class RemoveCategoryCommandHandler
 {
     /**
      * RemoveCategoryHandler constructor.

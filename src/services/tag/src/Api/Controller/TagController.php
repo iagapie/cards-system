@@ -2,14 +2,8 @@
 
 declare(strict_types=1);
 
-namespace CategoryService\Api\Controller;
+namespace TagService\Api\Controller;
 
-use CategoryService\Api\Application\Command\CreateCategory\CreateCategoryCommand;
-use CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryCommand;
-use CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryCommand;
-use CategoryService\Api\Application\Query\CategoryQueryInterface;
-use CategoryService\Api\Application\Query\Criteria;
-use CategoryService\Api\Application\Query\Range;
 use IA\Mediator\MediatorInterface;
 use IA\Route\Attribute\Delete;
 use IA\Route\Attribute\Get;
@@ -24,21 +18,27 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use TagService\Api\Application\Command\CreateTagCommand;
+use TagService\Api\Application\Command\RemoveTagCommand;
+use TagService\Api\Application\Command\UpdateTagCommand;
+use TagService\Api\Application\Query\Criteria;
+use TagService\Api\Application\Query\Range;
+use TagService\Api\Application\Query\TagQueryInterface;
 
 use function json_encode;
 
-#[Prefix('/api/v1/categories')]
-final class CategoryController
+#[Prefix('/api/v1/tags')]
+final class TagController
 {
     public const UUID_REGEX = '(?i)[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}';
 
     /**
-     * CategoryController constructor.
+     * TagController constructor.
      * @param ResponseFactoryInterface $responseFactory
      * @param StreamFactoryInterface $streamFactory
      * @param UrlGeneratorInterface $urlGenerator
      * @param MediatorInterface $mediator
-     * @param CategoryQueryInterface $query
+     * @param TagQueryInterface $query
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -46,7 +46,7 @@ final class CategoryController
         private StreamFactoryInterface $streamFactory,
         private UrlGeneratorInterface $urlGenerator,
         private MediatorInterface $mediator,
-        private CategoryQueryInterface $query,
+        private TagQueryInterface $query,
         private LoggerInterface $logger,
     ) {
     }
@@ -58,25 +58,21 @@ final class CategoryController
 
         $params = $request->getQueryParams();
 
-        $criteria = new Criteria(
-            (array)($params['category'] ?? []),
-            $params['parent'] ?? null,
-            $params['board'] ?? null,
-        );
+        $criteria = new Criteria((array)($params['tag'] ?? []), $params['board'] ?? null);
 
         $range = new Range((int)($params['skip'] ?? 0), (int)($params['limit'] ?? 0));
 
-        $data = $this->query->getCategories($criteria, $range);
+        $data = $this->query->getTags($criteria, $range);
 
         return $this->response($data);
     }
 
-    #[Get('/{id:'.self::UUID_REGEX.'}', 'category')]
+    #[Get('/{id:'.self::UUID_REGEX.'}', 'tag')]
     public function get(string $id): ResponseInterface
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $data = $this->query->getCategory($id);
+        $data = $this->query->getTag($id);
 
         return $this->response($data);
     }
@@ -90,19 +86,11 @@ final class CategoryController
 
         $id = Uuid::uuid4()->toString();
 
-        $command = new CreateCategoryCommand(
-            $id,
-            $data['parentId'] ?? null,
-            $data['boardId'] ?? '',
-            $data['name'] ?? '',
-            $data['description'] ?? null,
-            $data['createdBy'] ?? '',
-            (int)($data['position'] ?? 0),
-        );
+        $command = new CreateTagCommand($id, $data['boardId'] ?? '', $data['name'] ?? '', $data['color'] ?? '');
 
         $this->mediator->send($command);
 
-        $location = $this->urlGenerator->absolute($request->getUri(), 'category', ['id' => $id]);
+        $location = $this->urlGenerator->absolute($request->getUri(), 'tag', ['id' => $id]);
 
         return $this->responseFactory->createResponse(201)->withHeader('Location', $location);
     }
@@ -114,13 +102,7 @@ final class CategoryController
 
         $data = (array)$request->getParsedBody();
 
-        $command = new UpdateCategoryCommand(
-            $id,
-            $data['parentId'] ?? null,
-            $data['name'] ?? '',
-            $data['description'] ?? null,
-            (int)($data['position'] ?? 0),
-        );
+        $command = new UpdateTagCommand($id, $data['name'] ?? '', $data['color'] ?? '');
 
         $this->mediator->send($command);
 
@@ -132,7 +114,7 @@ final class CategoryController
     {
         $this->logger->debug('ACTION -- {method}', ['method' => __METHOD__]);
 
-        $command = new RemoveCategoryCommand($id);
+        $command = new RemoveTagCommand($id);
 
         $this->mediator->send($command);
 

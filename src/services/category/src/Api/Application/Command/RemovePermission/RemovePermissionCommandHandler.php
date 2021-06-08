@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace CategoryService\Api\Application\Command\AddPermission;
+namespace CategoryService\Api\Application\Command\RemovePermission;
 
 use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface;
-use CategoryService\Domain\Exception\RecordConflictException;
 use CategoryService\Domain\Exception\RecordNotFoundException;
 use Psr\Log\LoggerInterface;
 
-final class AddPermissionHandler
+final class RemovePermissionCommandHandler
 {
     /**
-     * AddPermissionHandler constructor.
+     * RemovePermissionHandler constructor.
      * @param CategoryRepositoryInterface $categoryRepository
      * @param LoggerInterface $logger
      */
@@ -23,21 +22,20 @@ final class AddPermissionHandler
     }
 
     /**
-     * @param AddPermissionCommand $command
-     * @throws RecordConflictException
+     * @param RemovePermissionCommand $command
      * @throws RecordNotFoundException
      */
-    public function handle(AddPermissionCommand $command): void
+    public function handle(RemovePermissionCommand $command): void
     {
         $category = $this->categoryRepository->get($command->getCategoryId());
-        $this->logger->debug(__METHOD__ . ' -- ' . count($category->getPermissions()));
-        $category->addPermission($command->getPermission());
 
-        $this->logger->info('----- Adding category permission: {categoryId} - {permission}', [
+        $category->removePermission($command->getPermission());
+
+        $this->logger->info('----- Removing category permission: {categoryId} - {permission}', [
             'categoryId' => $category->getId(),
             'permission' => $command->getPermission(),
         ]);
-        $this->logger->debug(__METHOD__ . ' -- ' . count($category->getPermissions()));
+
         $this->categoryRepository->update($category);
     }
 }

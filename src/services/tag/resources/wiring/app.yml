@@ -10,3 +10,18 @@ services:
   TagService\Api\Infrastructure\Event\ErrorSubscriber:
     tags:
       - 'kernel.event_subscriber'
+
+  TagService\Domain\AggregateModel\TagAggregate\TagRepositoryInterface:
+    class: TagService\Infrastructure\Repository\TagRepository
+
+  TagService\Api\Application\Command\CreateTagCommand:
+    class: TagService\Api\Application\Command\CreateTagCommandHandler
+
+  TagService\Api\Application\Command\UpdateTagCommand:
+    class: TagService\Api\Application\Command\UpdateTagCommandHandler
+
+  TagService\Api\Application\Command\RemoveTagCommand:
+    class: TagService\Api\Application\Command\RemoveTagCommandHandler
+
+  TagService\Api\Application\Query\TagQueryInterface:
+    class: TagService\Api\Application\Query\TagQuery

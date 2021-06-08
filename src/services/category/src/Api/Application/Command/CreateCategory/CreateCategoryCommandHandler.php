@@ -9,7 +9,7 @@ use CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryIn
 use CategoryService\Domain\Exception\RecordConflictException;
 use Psr\Log\LoggerInterface;
 
-final class CreateCategoryHandler
+final class CreateCategoryCommandHandler
 {
     /**
      * CreateCategoryHandler constructor.

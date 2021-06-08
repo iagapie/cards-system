@@ -10,3 +10,27 @@ services:
   CategoryService\Api\Infrastructure\Event\ErrorSubscriber:
     tags:
       - 'kernel.event_subscriber'
+
+  CategoryService\Infrastructure\Mapper\CategoryMapperInterface:
+    class: CategoryService\Infrastructure\Mapper\CategoryMapper
+
+  CategoryService\Domain\AggregateModel\CategoryAggregate\CategoryRepositoryInterface:
+    class: CategoryService\Infrastructure\Repository\CategoryRepository
+
+  CategoryService\Api\Application\Command\CreateCategory\CreateCategoryCommand:
+    class: CategoryService\Api\Application\Command\CreateCategory\CreateCategoryCommandHandler
+
+  CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryCommand:
+    class: CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryCommandHandler
+
+  CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryCommand:
+    class: CategoryService\Api\Application\Command\RemoveCategory\RemoveCategoryCommandHandler
+
+  CategoryService\Api\Application\Command\AddPermission\AddPermissionCommand:
+    class: CategoryService\Api\Application\Command\AddPermission\AddPermissionCommandHandler
+
+  CategoryService\Api\Application\Command\RemovePermission\RemovePermissionCommand:
+    class: CategoryService\Api\Application\Command\RemovePermission\RemovePermissionCommandHandler
+
+  CategoryService\Api\Application\Query\CategoryQueryInterface:
+    class: CategoryService\Api\Application\Query\CategoryQuery

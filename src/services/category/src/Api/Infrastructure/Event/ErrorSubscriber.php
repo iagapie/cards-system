@@ -22,9 +22,7 @@ final class ErrorSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
-        return [
-            ErrorEvent::NAME => 'onError'
-        ];
+        return [ErrorEvent::NAME => 'onError'];
     }
 
     public function onError(ErrorEvent $event): void
