@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  validator_factory:
+    class: Symfony\Component\Validator\ValidatorBuilder
+    calls:
+      - [ enableAnnotationMapping, [ true ] ]
+
+  validator:
+    class: Symfony\Component\Validator\Validator\ValidatorInterface
+    factory: [ '@validator_factory', 'getValidator' ]
+
+  Symfony\Component\Validator\Validator\ValidatorInterface:
+    alias: validator

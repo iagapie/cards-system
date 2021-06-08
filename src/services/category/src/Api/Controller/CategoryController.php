@@ -10,7 +10,7 @@ use CategoryService\Api\Application\Command\UpdateCategory\UpdateCategoryCommand
 use CategoryService\Api\Application\Query\CategoryQueryInterface;
 use CategoryService\Api\Application\Query\Criteria;
 use CategoryService\Api\Application\Query\Range;
-use CategoryService\Api\Infrastructure\Mediator\MediatorInterface;
+use IA\Mediator\MediatorInterface;
 use IA\Route\Attribute\Delete;
 use IA\Route\Attribute\Get;
 use IA\Route\Attribute\Post;

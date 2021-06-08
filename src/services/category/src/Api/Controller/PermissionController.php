@@ -6,7 +6,7 @@ namespace CategoryService\Api\Controller;
 
 use CategoryService\Api\Application\Command\AddPermission\AddPermissionCommand;
 use CategoryService\Api\Application\Command\RemovePermission\RemovePermissionCommand;
-use CategoryService\Api\Infrastructure\Mediator\MediatorInterface;
+use IA\Mediator\MediatorInterface;
 use IA\Route\Attribute\Delete;
 use IA\Route\Attribute\Prefix;
 use IA\Route\Attribute\Put;

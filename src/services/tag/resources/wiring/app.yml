@@ -4,9 +4,9 @@ services:
     autoconfigure: true
     public: true
 
-  CategoryService\Api\Controller\:
+  TagService\Api\Controller\:
     resource: '%kernel.project_dir%/src/Api/Controller/'
 
-  CategoryService\Api\Infrastructure\Event\ErrorSubscriber:
+  TagService\Api\Infrastructure\Event\ErrorSubscriber:
     tags:
       - 'kernel.event_subscriber'

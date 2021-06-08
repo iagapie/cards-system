@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  cache:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      $namespace: 'main'
+      $directory: '%kernel.cache_dir%'
+    calls:
+      - [ setLogger, [ '@logger' ] ]
+
+  Symfony\Component\Cache\Adapter\AdapterInterface:
+    alias: cache
+
+  Symfony\Contracts\Cache\CacheInterface:
+    alias: cache
+
+  Psr\Cache\CacheItemPoolInterface:
+    alias: cache

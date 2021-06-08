@@ -9,4 +9,4 @@ if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
-CategoryService\Api\Infrastructure\Kernel::run(true);
+TagService\Api\Infrastructure\Kernel::run(true);

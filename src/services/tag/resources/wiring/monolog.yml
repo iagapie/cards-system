@@ -1,0 +1,47 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  Monolog\Formatter\LineFormatter: ~
+  Monolog\Formatter\JsonFormatter: ~
+
+  Monolog\Processor\HostnameProcessor: ~
+  Monolog\Processor\MemoryPeakUsageProcessor: ~
+  Monolog\Processor\MemoryUsageProcessor: ~
+  Monolog\Processor\ProcessIdProcessor: ~
+  Monolog\Processor\UidProcessor: ~
+  Monolog\Processor\WebProcessor: ~
+
+  stream_handler:
+    class: Monolog\Handler\StreamHandler
+    arguments:
+      - '%kernel.logs_dir%/app.log'
+      - '%env(LOGGER_LEVEL)%'
+    calls:
+      - [ setFormatter, [ '@Monolog\Formatter\JsonFormatter' ] ]
+
+  error_log_handler:
+    class: Monolog\Handler\ErrorLogHandler
+    arguments:
+      $level: '%env(LOGGER_LEVEL)%'
+    calls:
+      - [ setFormatter, [ '@Monolog\Formatter\LineFormatter' ] ]
+
+  logger:
+    class: Monolog\Logger
+    public: true
+    arguments:
+      - '%kernel.name%'
+      - [ '@error_log_handler', '@stream_handler' ]
+      - [ '@Monolog\Processor\WebProcessor' ]
+    calls:
+      - [ pushProcessor, [ '@Monolog\Processor\HostnameProcessor' ] ]
+      - [ pushProcessor, [ '@Monolog\Processor\MemoryPeakUsageProcessor' ] ]
+      - [ pushProcessor, [ '@Monolog\Processor\MemoryUsageProcessor' ] ]
+      - [ pushProcessor, [ '@Monolog\Processor\ProcessIdProcessor' ] ]
+      - [ pushProcessor, [ '@Monolog\Processor\UidProcessor' ] ]
+
+  Psr\Log\LoggerInterface:
+    alias: logger
+    public: true
