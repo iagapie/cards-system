@@ -2,11 +2,10 @@ const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 // eslint-disable-next-line max-len
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
-const ReactRefreshBabel = require('react-refresh/babel')
+const ReactRefreshBabelPlugin = require('react-refresh/babel')
 
 const paths = require('./paths')
 const common = require('./webpack.common')
-const postcssOptions = require('./postcssOptions')
 
 module.exports = merge(common, {
   // Set the mode to development or production
@@ -33,7 +32,7 @@ module.exports = merge(common, {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: [ReactRefreshBabel].filter(Boolean),
+            plugins: [ReactRefreshBabelPlugin].filter(Boolean),
           },
         },
       },
@@ -49,7 +48,9 @@ module.exports = merge(common, {
           {
             loader: 'postcss-loader',
             options: {
-              postcssOptions,
+              postcssOptions: {
+                ident: 'postcss',
+              },
               sourceMap: true,
             },
           },

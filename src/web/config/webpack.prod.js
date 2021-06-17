@@ -4,7 +4,6 @@ const { merge } = require('webpack-merge')
 
 const paths = require('./paths')
 const common = require('./webpack.common')
-const postcssOptions = require('./postcssOptions')
 
 module.exports = merge(common, {
   mode: 'production',
@@ -33,7 +32,9 @@ module.exports = merge(common, {
           {
             loader: 'postcss-loader',
             options: {
-              postcssOptions,
+              postcssOptions: {
+                ident: 'postcss',
+              },
             },
           },
           'sass-loader',

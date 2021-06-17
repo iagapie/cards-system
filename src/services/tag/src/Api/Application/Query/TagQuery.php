@@ -80,7 +80,7 @@ final class TagQuery implements TagQueryInterface
         }
 
         $rows = $qb->setParameters($params, $types)->fetchAllAssociative();
-        $rows = array_map(fn ($row) => $this->normalize($row), $rows);
+        $rows = array_map(fn($row) => $this->normalize($row), $rows);
 
         return new class($rows) implements JsonSerializable {
             public function __construct(private array $rows)
