@@ -43,6 +43,9 @@ const authSlice = createSlice({
       state.error = payload
       state.loading = false
     },
+    clearError: (state) => {
+      state.error = ''
+    },
   },
 })
 
@@ -55,6 +58,7 @@ export const {
   logoutSuccess,
   registration,
   registrationError,
+  clearError,
 } = authSlice.actions
 
 export default authSlice.reducer

@@ -26,15 +26,16 @@
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
     "jsx-a11y/label-has-associated-control": "off",
-    "max-len": [
-      "error",
-      {
-        "ignoreUrls": true,
-        "ignoreComments": true,
-        "ignoreTrailingComments": true,
-        "code": 80
-      }
-    ],
+    "max-len": "off",
+//    "max-len": [
+//      "error",
+//      {
+//        "ignoreUrls": true,
+//        "ignoreComments": true,
+//        "ignoreTrailingComments": true,
+//        "code": 80
+//      }
+//    ],
     "prefer-template": "off",
     "indent": [1, 2],
     "object-curly-spacing": 1,

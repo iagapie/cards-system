@@ -1,6 +1,8 @@
 const flexboxFixes = require('postcss-flexbugs-fixes')
 const presetEnv = require('postcss-preset-env')
 const normalize = require('postcss-normalize')
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
 
 module.exports = {
   plugins: [
@@ -13,5 +15,7 @@ module.exports = {
       stage: 3,
     }),
     normalize(),
+    tailwindcss,
+    autoprefixer,
   ],
 }
