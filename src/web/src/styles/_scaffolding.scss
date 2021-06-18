@@ -70,6 +70,6 @@
   }
 
   &__btn {
-    @apply uppercase block w-full p-4 text-lg rounded bg-indigo-500 hover:bg-indigo-600 focus:outline-none;
+    @apply uppercase block w-full p-4 text-lg rounded bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 focus:outline-none;
   }
 }
