@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Board.Api.Infrastructure.ActionResults;
-using Board.Domain.Exceptions;
+using Card.Api.Infrastructure.ActionResults;
+using Card.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Board.Api.Infrastructure.Filters
+namespace Card.Api.Infrastructure.Filters
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
@@ -29,7 +29,7 @@ namespace Board.Api.Infrastructure.Filters
                 context.Exception.Message
             );
 
-            if (context.Exception.GetType() == typeof(BoardDomainException))
+            if (context.Exception.GetType() == typeof(CardDomainException))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {

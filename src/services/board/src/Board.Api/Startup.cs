@@ -21,25 +21,19 @@ namespace Board.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services
-                .AddApplicationInsights(Configuration)
-                .AddCustomMvc()
-                .AddCustomHealthCheck(Configuration)
-                .AddCustomDbContext(Configuration)
-                .AddCustomSwagger()
-                .AddCustomIntegrations()
-                .AddCustomConfiguration();
-        }
+        public void ConfigureServices(IServiceCollection services) => services
+            .AddApplicationInsights(Configuration)
+            .AddCustomMvc()
+            .AddCustomHealthCheck(Configuration)
+            .AddCustomDbContext(Configuration)
+            .AddCustomSwagger()
+            .AddCustomIntegrations()
+            .AddCustomConfiguration();
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
@@ -150,7 +144,7 @@ namespace Board.Api
             {
                 options.AddPolicy("CorsPolicy",
                     builder => builder
-                        .SetIsOriginAllowed((host) => true)
+                        .SetIsOriginAllowed(_ => true)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

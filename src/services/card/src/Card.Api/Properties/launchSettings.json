@@ -4,8 +4,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:34241",
-      "sslPort": 44360
+      "applicationUrl": "http://localhost:58270",
+      "sslPort": 0
     }
   },
   "profiles": {
@@ -20,11 +20,14 @@
     "Card.Api": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
+      "externalUrlConfiguration": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "applicationUrl": "http://localhost:8005",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PORT": "8005",
+        "Serilog__MinimumLevel__Override__Card": "Verbose"
       }
     }
   }
