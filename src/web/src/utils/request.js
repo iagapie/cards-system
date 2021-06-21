@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import history from './history'
 import { store } from '../store'
-import { API_URL, ENDPOINTS } from '../api/endpoints'
+import { API_URL, ENDPOINTS } from '../constants/endpoints'
 import { ROUTES } from '../constants/routes'
 import { removeAccessTokens, setAccessTokens, setCsrf } from '../slices/token'
 import { getToken } from '../selectors'
@@ -100,10 +100,8 @@ const executor = (config) => (resolve, reject) => {
     .catch((error) => reject(error?.response?.data ?? error?.response))
 }
 
-export const request =
-  (method = 'GET') =>
-  (url) =>
-  ({ headers, params, data } = {}) => {
-    const config = { method, url, headers, params, data }
-    return new Promise(executor(config))
-  }
+// prettier-ignore
+export const request = (method = 'GET') => (url) => ({ headers, params, data } = {}) => {
+  const config = { method, url, headers, params, data }
+  return new Promise(executor(config))
+}

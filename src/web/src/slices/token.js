@@ -1,10 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {
-  getToken,
-  getRefreshToken,
-  removeTokens,
-  rewriteTokens,
-} from '../utils/cookie_tokens'
+import { getToken, getRefreshToken, removeTokens, rewriteTokens } from '../utils/cookie_tokens'
 
 export const initialState = {
   accessToken: getToken() || '',
@@ -32,7 +27,6 @@ const tokenSlice = createSlice({
   },
 })
 
-export const { setAccessTokens, removeAccessTokens, setCsrf } =
-  tokenSlice.actions
+export const { setAccessTokens, removeAccessTokens, setCsrf } = tokenSlice.actions
 
 export default tokenSlice.reducer

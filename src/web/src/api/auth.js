@@ -1,5 +1,5 @@
 import { request } from '../utils/request'
-import { ENDPOINTS } from './endpoints'
+import { ENDPOINTS } from '../constants/endpoints'
 
 export const apiLogin = ({ email, password }) =>
   request('POST')(ENDPOINTS.AUTH.LOGIN)({

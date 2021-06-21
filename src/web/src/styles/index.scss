@@ -1,7 +1,43 @@
 @import '~tailwindcss/base';
 @import '~tailwindcss/components';
 @import '~tailwindcss/utilities';
-//@import 'variables';
-//@import 'mixins';
-//@import 'fonts';
-@import 'scaffolding';
+
+.loading {
+  @apply flex space-x-1 p-1 rounded-sm shadow-sm select-none animate-pulse relative;
+
+  &__item {
+    @apply w-6 rounded-sm shadow-sm animate-pulse;
+  }
+
+  &__new {
+    @apply w-6 h-1.5 rounded-sm shadow-sm animate-pulse flex items-center justify-center;
+    font-size: 0.12rem;
+  }
+
+  &__text {
+    @apply absolute bottom-0.5 right-0.5 leading-3 animate-pulse;
+    font-size: 0.5rem;
+  }
+}
+
+.board-list-card {
+  $parent: &;
+
+  &__fade {
+    @apply absolute inset-0 block bg-transparent transition bg-black-10 z-0;
+  }
+
+  &__link {
+    @apply flex flex-col px-2 py-1.5 h-28 rounded relative text-gray-50;
+
+    &:hover {
+      #{$parent}__fade {
+        @apply bg-black-20;
+      }
+    }
+  }
+
+  &__name {
+    @apply max-h-12 text-gray-50 text-lg leading-6 font-bold overflow-ellipsis overflow-hidden z-10;
+  }
+}

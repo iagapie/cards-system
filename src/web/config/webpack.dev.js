@@ -1,6 +1,5 @@
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
-// eslint-disable-next-line max-len
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const ReactRefreshBabelPlugin = require('react-refresh/babel')
 

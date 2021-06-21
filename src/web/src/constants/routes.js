@@ -3,9 +3,11 @@ export const ROUTES = {
   AUTH: {
     LOGIN: '/login',
     REGISTRATION: '/signup',
+    FORGOT_PASSWORD: '/forgot',
   },
   BOARD: {
-    HOME: '/board',
+    LIST: '/boards',
+    ONE: (id = ':boardId') => `/boards/${id}`,
   },
   ERROR: {
     NOT_FOUND: '/404',

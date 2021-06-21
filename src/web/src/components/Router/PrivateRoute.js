@@ -8,14 +8,7 @@ import { ROUTES } from '../../constants/routes'
 export const PrivateRoute = ({ children: Component, ...rest }) => {
   const { isAuthenticated } = useSelector(getAuth)
 
-  return (
-    <Route
-      render={() =>
-        isAuthenticated ? Component : <Redirect to={ROUTES.AUTH.LOGIN} />
-      }
-      {...rest}
-    />
-  )
+  return <Route render={() => (isAuthenticated ? Component : <Redirect to={ROUTES.AUTH.LOGIN} />)} {...rest} />
 }
 
 PrivateRoute.propTypes = {

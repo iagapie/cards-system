@@ -1,5 +1,5 @@
 import { authorization, request } from '../utils/request'
-import { ENDPOINTS } from './endpoints'
+import { ENDPOINTS } from '../constants/endpoints'
 
 export const apiMe = (token) =>
   request()(ENDPOINTS.USER.ME)({
