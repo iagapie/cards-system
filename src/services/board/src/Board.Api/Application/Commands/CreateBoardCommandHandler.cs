@@ -21,7 +21,7 @@ namespace Board.Api.Application.Commands
         public async Task<bool> Handle(CreateBoardCommand command, CancellationToken cancellationToken)
         {
             var id = Guid.Parse(command.Id);
-            var board = new Domain.AggregatesModel.BoardAggregate.Board(id, command.Name, command.OwnerId, command.Description);
+            var board = new Domain.AggregatesModel.BoardAggregate.Board(id, command.Name, command.OwnerId, command.Color, command.Description);
             
             _logger.LogInformation("----- Creating Board: {@Board}", board);
             

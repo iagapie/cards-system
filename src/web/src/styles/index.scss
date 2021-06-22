@@ -20,6 +20,14 @@
   }
 }
 
+.btn-white-30 {
+  @apply text-base leading-normal text-gray-50 px-1.5 py-1 grid grid-flow-col items-center gap-1.5 bg-white-30 rounded transition hover:bg-white-20 focus:outline-none;
+}
+
+.md\:btn-white-30 {
+  @apply text-base leading-normal hidden text-gray-50 px-1.5 py-1 md:grid grid-flow-col items-center gap-1.5 bg-white-30 rounded transition hover:bg-white-20 focus:outline-none;
+}
+
 .board-list-card {
   $parent: &;
 

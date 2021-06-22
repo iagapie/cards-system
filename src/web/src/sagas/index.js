@@ -9,11 +9,14 @@ import {
   logoutSuccess,
   registration,
   registrationError,
+  noLoading,
 } from '../slices/auth'
 import { apiMe } from '../api/user'
 import { apiLogin, apiRegistration } from '../api/auth'
 import { removeAccessTokens, setAccessTokens } from '../slices/token'
-import { getToken } from '../selectors'
+import { getToken, getAuth } from '../selectors'
+import history from '../utils/history'
+import { ROUTES } from '../constants/routes'
 
 function* saveTokens(payload) {
   const data = {
@@ -27,12 +30,18 @@ function* loginUser() {
   const { accessToken, refreshToken } = yield select(getToken)
 
   if (accessToken && refreshToken) {
-    try {
-      const { data } = yield call(apiMe, accessToken)
-      yield put(loginSuccess(data))
-    } catch (error) {
-      yield put(removeAccessTokens())
-      yield put(loginError(error.message))
+    const { isAuthenticated } = yield select(getAuth)
+
+    if (isAuthenticated) {
+      yield put(noLoading())
+    } else {
+      try {
+        const { data } = yield call(apiMe, accessToken)
+        yield put(loginSuccess(data))
+      } catch (error) {
+        yield put(removeAccessTokens())
+        yield put(loginError(error.message))
+      }
     }
   } else {
     yield put(removeAccessTokens())
@@ -57,6 +66,7 @@ function* logoutUser() {
   } catch (error) {
     yield put(logoutSuccess())
   }
+  history.push(ROUTES.AUTH.LOGIN)
 }
 
 function* registrationUser({ payload }) {

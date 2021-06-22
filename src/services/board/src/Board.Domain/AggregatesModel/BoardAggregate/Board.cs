@@ -13,6 +13,8 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
 
         private string _ownerId;
 
+        private string _color;
+
         private string _description;
 
         private readonly List<Member> _members;
@@ -20,11 +22,12 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
 
         protected Board() => _members = new List<Member>();
 
-        public Board(Guid id, string name, string ownerId, string description) : this()
+        public Board(Guid id, string name, string ownerId, string color, string description) : this()
         {
             Id = id;
             _name = name;
             _ownerId = ownerId;
+            _color = color;
             _description = description;
             _members.Add(new Member(Guid.NewGuid(), ownerId, Role.Owner));
 
@@ -82,6 +85,16 @@ namespace Board.Domain.AggregatesModel.BoardAggregate
             _name = name;
 
             AddDomainEvent(new BoardNameChangedDomainEvent(Id, name));
+        }
+
+        public string GetColor() => _color;
+
+        public void SetColor(string color)
+        {
+            if (_color == color) return;
+            _color = color;
+            
+            AddDomainEvent(new BoardColorChangedDomainEvent(Id, color));
         }
 
         public string GetDescription() => _description;

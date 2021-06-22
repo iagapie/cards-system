@@ -97,8 +97,8 @@ const BoardList = () => {
           <span className="text-lg text-blue-gray-900 font-bold">Your Workspace boards</span>
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-4">
-          {boards.map((board) => (
-            <BoardCard board={board} />
+          {boards.map((board, i) => (
+            <BoardCard key={i} board={board} />
           ))}
           <NewBoardCard />
         </div>

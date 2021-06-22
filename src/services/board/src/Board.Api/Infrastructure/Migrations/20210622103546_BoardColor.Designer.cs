@@ -3,15 +3,17 @@ using System;
 using Board.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Board.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(BoardContext))]
-    partial class BoardContextModelSnapshot : ModelSnapshot
+    [Migration("20210622103546_BoardColor")]
+    partial class BoardColor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

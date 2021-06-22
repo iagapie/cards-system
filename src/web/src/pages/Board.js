@@ -37,28 +37,28 @@ const Board = () => {
 
   return (
     <main className="flex flex-col space-y-2.5 p-2.5 h-full overflow-hidden">
-      <div className="h-8 flex justify-between space-x-2">
+      <div className="flex justify-between space-x-2">
         <div className="flex space-x-2 overflow-hidden">
-          <div className="flex items-center text-gray-50 overflow-hidden text-base leading-4 font-bold px-2.5 py-2 rounded bg-white-30 transition hover:bg-white-20 cursor-pointer">
+          <div className="btn-white-30 font-bold">
             <span className="truncate">Finance planning</span>
           </div>
           <div className="hidden md:block w-px bg-white-20 my-2.5" />
-          <div className="text-gray-50 text-base leading-4 px-2.5 py-2 flex items-center justify-center rounded bg-white-30">
-            <LockClosedIcon className="w-3.5 h-3.5" />
-            <span className="hidden md:pl-2.5 md:inline-block">Private</span>
+          <div className="btn-white-30">
+            <LockClosedIcon className="w-5 h-5" />
+            <span className="hidden md:inline-block">Private</span>
           </div>
           <div className="hidden md:block w-px bg-white-20 my-2.5" />
           <button className="hidden md:flex items-center justify-center w-8 h-8 text-sm text-gray-50 overflow-hidden transition hover:text-gray-100 focus:outline-none">
             {!profileImg ? <UserCircleIcon /> : <img className="rounded-full" src={profileImg} alt="Igor Agapie" />}
           </button>
-          <button className="hidden md:flex items-center justify-center text-gray-50 text-base leading-4 px-2.5 py-2 rounded bg-white-30 transition hover:bg-white-20 focus:outline-none cursor-pointer">
+          <button className="md:btn-white-30 btn-text-base">
             <span>Invite</span>
           </button>
         </div>
         <div className="flex space-x-2">
-          <button className="text-gray-50 text-base leading-4 px-2.5 py-2 flex items-center justify-center rounded bg-white-30 transition hover:bg-white-20 focus:outline-none cursor-pointer">
-            <DotsHorizontalIcon className="w-4 h-4" />
-            <span className="hidden md:pl-2.5 md:inline-block">Show menu</span>
+          <button className="btn-white-30">
+            <DotsHorizontalIcon className="w-5 h-5" />
+            <span className="hidden md:inline-block">Show menu</span>
           </button>
         </div>
       </div>

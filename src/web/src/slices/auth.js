@@ -1,10 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const keyUser = 'auth.user'
+const keyAuthenticated = 'auth.authenticated'
+
+const setValue = (key, value) => {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } catch {}
+}
+
+const value = (key, initialValue) => {
+  try {
+    const item = window.localStorage.getItem(key)
+    return item ? JSON.parse(item) : initialValue
+  } catch {
+    return initialValue
+  }
+}
+
 export const initialState = {
-  currentUser: {},
-  isAuthenticated: false,
-  error: '',
+  currentUser: value(keyUser, {}),
+  isAuthenticated: value(keyAuthenticated, false),
   loading: false,
+  error: '',
 }
 
 const authSlice = createSlice({
@@ -21,11 +39,14 @@ const authSlice = createSlice({
       state.currentUser = payload
       state.isAuthenticated = true
       state.loading = false
+      setValue(keyUser, payload)
+      setValue(keyAuthenticated, true)
     },
     loginError: (state, { payload }) => {
       state.error = payload
       state.isAuthenticated = false
       state.loading = false
+      setValue(keyAuthenticated, false)
     },
     logout: (state) => {
       state.loading = true
@@ -35,6 +56,8 @@ const authSlice = createSlice({
       state.currentUser = {}
       state.error = ''
       state.loading = false
+      setValue(keyUser, {})
+      setValue(keyAuthenticated, false)
     },
     registration: (state) => {
       state.loading = true
@@ -45,6 +68,9 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = ''
+    },
+    noLoading: (state) => {
+      state.loading = false
     },
   },
 })
@@ -59,6 +85,7 @@ export const {
   registration,
   registrationError,
   clearError,
+  noLoading,
 } = authSlice.actions
 
 export default authSlice.reducer

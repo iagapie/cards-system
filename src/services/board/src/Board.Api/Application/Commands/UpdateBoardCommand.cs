@@ -12,6 +12,9 @@ namespace Board.Api.Application.Commands
 
         [DataMember, JsonPropertyName("name"), Required]
         public string Name { get; init; }
+        
+        [DataMember, JsonPropertyName("color"), Required]
+        public string Color { get; init; }
 
         [DataMember, JsonPropertyName("description")]
         public string Description { get; init; }

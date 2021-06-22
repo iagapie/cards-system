@@ -32,6 +32,13 @@ namespace Board.Infrastructure.EntityConfigurations
                 .IsRequired();
             
             builder
+                .Property<string>("_color")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("color")
+                .HasMaxLength(50)
+                .IsRequired();
+            
+            builder
                 .Property<string>("_description")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("description")

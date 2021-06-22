@@ -46,6 +46,8 @@ namespace Board.Api.Application.Queries
 
         [JsonPropertyName("name")] public string Name { get; init; }
 
+        [JsonPropertyName("color")] public string Color { get; init; }
+
         [JsonPropertyName("description")] public string Description { get; init; }
 
         [JsonPropertyName("created_at")] public DateTimeOffset CreatedAt { get; init; }

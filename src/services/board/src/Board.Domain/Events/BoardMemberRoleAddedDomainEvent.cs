@@ -9,10 +9,6 @@ namespace Board.Domain.Events
         public Guid BoardId { get; }
         public Member Member { get; }
 
-        public BoardMemberRoleAddedDomainEvent(Guid boardId, Member member)
-        {
-            BoardId = boardId;
-            Member = member;
-        }
+        public BoardMemberRoleAddedDomainEvent(Guid boardId, Member member) => (BoardId, Member) = (boardId, member);
     }
 }

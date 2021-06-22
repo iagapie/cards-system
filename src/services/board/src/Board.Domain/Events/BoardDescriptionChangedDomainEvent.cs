@@ -8,10 +8,6 @@ namespace Board.Domain.Events
         public Guid Id { get; }
         public string Description { get; }
 
-        public BoardDescriptionChangedDomainEvent(Guid id, string description)
-        {
-            Id = id;
-            Description = description;
-        }
+        public BoardDescriptionChangedDomainEvent(Guid id, string description) => (Id, Description) = (id, description);
     }
 }

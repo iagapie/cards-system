@@ -26,6 +26,7 @@ namespace Board.Api.Application.Commands
             if (board == null) return false;
             
             board.SetName(command.Name);
+            board.SetColor(command.Color);
             board.SetDescription(command.Description);
             
             _logger.LogInformation("----- Updating Board: {@Board}", board);

@@ -10,6 +10,7 @@ namespace Board.Api.Application.Validations
         {
             RuleFor(command => command.Id).Must(ValidGuid).WithMessage("Please specify a valid board id");
             RuleFor(command => command.Name).NotEmpty().MaximumLength(150);
+            RuleFor(command => command.Color).NotEmpty().MaximumLength(50);
             RuleFor(command => command.Description).MaximumLength(1000);
             
             logger.LogTrace("----- INSTANCE CREATED - {ClassName}", GetType().Name);
