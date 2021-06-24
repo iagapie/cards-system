@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace Board.Api.Infrastructure.Filters
 {
     public class JsonErrorResponse
     {
-        public string[] Messages { get; set; }
+        [JsonPropertyName("messages")] public string[] Messages { get; set; }
 
+        [JsonPropertyName("developer_message"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object DeveloperMessage { get; set; }
     }
 }

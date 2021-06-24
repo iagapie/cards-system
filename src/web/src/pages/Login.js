@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
@@ -7,12 +7,11 @@ import { DocumentTitle } from '../components/DocumentTitle'
 import { APP } from '../constants/app'
 import { ROUTES } from '../constants/routes'
 import { VALIDATION } from '../constants/validation'
-import { getAuth } from '../selectors'
-import { login } from '../slices/auth'
+import { getAuth } from '../redux/selectors'
+import { clearError, login } from '../redux/slices/auth'
 
 const Login = () => {
-  const { isAuthenticated, loading, error } = useSelector(getAuth)
-
+  const { loading, error } = useSelector(getAuth)
   const dispatch = useDispatch()
 
   const {
@@ -22,11 +21,15 @@ const Login = () => {
     reset,
   } = useForm({ mode: 'onChange' })
 
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
+  useEffect(
+    () => () => {
       reset()
-    }
-  }, [isAuthenticated, loading, reset])
+      dispatch(clearError())
+    },
+    [dispatch, reset],
+  )
+
+  const disabled = useMemo(() => loading || !isDirty || !isValid, [loading, isDirty, isValid])
 
   const onSubmit = (data) => {
     dispatch(login(data))
@@ -76,7 +79,7 @@ const Login = () => {
               <button
                 type="submit"
                 className="flex items-center justify-center focus:outline-none text-white text-base font-semibold bg-sky-600 hover:bg-sky-700 rounded py-2 w-full transition duration-150 ease-in disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-default"
-                disabled={loading || !isDirty || !isValid}
+                disabled={disabled}
               >
                 Log in
               </button>

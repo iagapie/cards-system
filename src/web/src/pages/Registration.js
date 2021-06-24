@@ -1,16 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 
-import { getAuth } from '../selectors'
-import { registration } from '../slices/auth'
+import { getAuth } from '../redux/selectors'
+import { clearError, registration } from '../redux/slices/auth'
 import { DocumentTitle } from '../components/DocumentTitle'
 import { VALIDATION } from '../constants/validation'
 import { ROUTES } from '../constants/routes'
 
 const Registration = () => {
-  const { isAuthenticated, loading, error } = useSelector(getAuth)
+  const { loading, error } = useSelector(getAuth)
 
   const dispatch = useDispatch()
 
@@ -21,11 +21,15 @@ const Registration = () => {
     reset,
   } = useForm({ mode: 'onChange' })
 
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
+  useEffect(
+    () => () => {
       reset()
-    }
-  }, [isAuthenticated, loading, reset])
+      dispatch(clearError())
+    },
+    [dispatch, reset],
+  )
+
+  const disabled = useMemo(() => loading || !isDirty || !isValid, [loading, isDirty, isValid])
 
   const onSubmit = (data) => {
     dispatch(registration(data))
@@ -46,8 +50,8 @@ const Registration = () => {
                 placeholder="Enter full name"
                 {...register('name', {
                   required: 'required',
-                  min: 2,
-                  max: 100,
+                  minLength: 2,
+                  maxLength: 100,
                 })}
               />
               {errors.name && <strong className="text-red-500 text-sm block pt-1">{errors.name.message}</strong>}
@@ -88,7 +92,7 @@ const Registration = () => {
               <button
                 type="submit"
                 className="flex items-center justify-center focus:outline-none text-white text-base font-semibold bg-sky-600 hover:bg-sky-700 rounded py-2 w-full transition duration-150 ease-in disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-default"
-                disabled={loading || !isDirty || !isValid}
+                disabled={disabled}
               >
                 Sign up
               </button>

@@ -2,8 +2,8 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import 'regenerator-runtime/runtime'
 
-import { store, sagaMiddleware } from './store'
-import rootSaga from './sagas'
+import { store, sagaMiddleware } from './redux/store'
+import rootSaga from './redux/sagas'
 import { App } from './components/App'
 
 import './styles/index.scss'

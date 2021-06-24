@@ -8,6 +8,9 @@ namespace Board.Api.Application.Queries
 {
     public record Criteria
     {
+        [FromQuery(Name = "board_id")]
+        public Guid[] BoardIds { get; init; }
+        
         [FromQuery(Name = "user_id"), StringLength(36)]
         public string UserId { get; init; }
 
@@ -20,7 +23,7 @@ namespace Board.Api.Application.Queries
         [FromQuery(Name = "skip"), Range(0, long.MaxValue)]
         public long Skip { get; init; }
 
-        [FromQuery(Name = "limit"), Range(0, 100)]
+        [FromQuery(Name = "limit"), Range(0, 101)]
         public long Limit { get; init; } = 20;
     }
 

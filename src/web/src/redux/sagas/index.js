@@ -1,5 +1,12 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 
+import { apiMe } from '../../api/user'
+import { apiLogin, apiRegistration } from '../../api/auth'
+import { apiAllBoards, apiCreateBoard, apiGetBoard } from '../../api/board'
+import { removeAccessTokens, setAccessTokens } from '../slices/token'
+import { getToken, getAuth } from '../selectors'
+import history from '../../utils/history'
+import { ROUTES } from '../../constants/routes'
 import {
   login,
   loginByToken,
@@ -11,12 +18,9 @@ import {
   registrationError,
   noLoading,
 } from '../slices/auth'
-import { apiMe } from '../api/user'
-import { apiLogin, apiRegistration } from '../api/auth'
-import { removeAccessTokens, setAccessTokens } from '../slices/token'
-import { getToken, getAuth } from '../selectors'
-import history from '../utils/history'
-import { ROUTES } from '../constants/routes'
+import { boardsAdd, boardsError, boardsLoad, boardsSuccess } from '../slices/boards'
+import { boardError, boardLoad, boardSuccess } from '../slices/board'
+import { createBoard, createBoardError, createBoardSuccess } from '../slices/createBoard'
 
 function* saveTokens(payload) {
   const data = {
@@ -80,12 +84,52 @@ function* registrationUser({ payload }) {
   yield call(loginUser)
 }
 
+function* fetchBoards() {
+  const { accessToken } = yield select(getToken)
+
+  try {
+    const { data } = yield call(apiAllBoards, accessToken)
+    yield put(boardsSuccess(data.boards))
+  } catch (error) {
+    yield put(boardsError(error.message))
+  }
+}
+
+function* fetchBoard({ payload }) {
+  const { accessToken } = yield select(getToken)
+
+  try {
+    const { data } = yield call(apiGetBoard, accessToken, payload)
+    yield put(boardSuccess(data))
+  } catch (error) {
+    yield put(boardError(error.message))
+  }
+}
+
+function* addBoard({ payload }) {
+  const { accessToken } = yield select(getToken)
+
+  try {
+    const { headers } = yield call(apiCreateBoard, accessToken, payload)
+    const id = headers['location'].split('/').pop()
+    const { data } = yield call(apiGetBoard, accessToken, id)
+    yield put(boardsAdd(data))
+    yield put(createBoardSuccess())
+    history.push(ROUTES.BOARD.ONE(id))
+  } catch (error) {
+    yield put(createBoardError(error.message))
+  }
+}
+
 function* rootSaga() {
   yield all([
     takeLatest(loginByToken.type, loginUser),
     takeLatest(login.type, authorize),
     takeLatest(logout.type, logoutUser),
     takeLatest(registration.type, registrationUser),
+    takeLatest(boardsLoad.type, fetchBoards),
+    takeLatest(boardLoad.type, fetchBoard),
+    takeLatest(createBoard.type, addBoard),
   ])
 }
 

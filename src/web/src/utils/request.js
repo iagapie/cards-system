@@ -1,11 +1,11 @@
 import axios from 'axios'
 
 import history from './history'
-import { store } from '../store'
+import { store } from '../redux/store'
 import { API_URL, ENDPOINTS } from '../constants/endpoints'
 import { ROUTES } from '../constants/routes'
-import { removeAccessTokens, setAccessTokens, setCsrf } from '../slices/token'
-import { getToken } from '../selectors'
+import { removeAccessTokens, setAccessTokens, setCsrf } from '../redux/slices/token'
+import { getToken } from '../redux/selectors'
 
 const csrfHeader = 'x-csrf-token'
 const bearer = (token) => `Bearer ${token}`

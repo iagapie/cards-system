@@ -46,6 +46,7 @@
   }
 
   &__name {
-    @apply max-h-12 text-gray-50 text-lg leading-6 font-bold overflow-ellipsis overflow-hidden z-10;
+    @apply max-h-12 text-gray-50 text-lg leading-6 font-bold overflow-ellipsis overflow-hidden;
+    z-index: 1;
   }
 }

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getToken, getRefreshToken, removeTokens, rewriteTokens } from '../utils/cookie_tokens'
+import { getToken, getRefreshToken, removeTokens, rewriteTokens } from '../../utils/cookie_tokens'
 
 export const initialState = {
   accessToken: getToken() || '',

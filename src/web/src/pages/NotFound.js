@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
 
 import { DocumentTitle } from '../components/DocumentTitle'
-import { getAuth } from '../selectors'
-import { logout } from '../slices/auth'
+import { getAuth } from '../redux/selectors'
+import { logout } from '../redux/slices/auth'
 
 export const NotFound = () => {
   const { isAuthenticated, currentUser } = useSelector(getAuth)

@@ -9,22 +9,24 @@ module.exports = {
       colors: {
         sky: colors.sky,
         'blue-gray': colors.blueGray,
+        orange: colors.orange,
+        lime: colors.lime,
       },
       maxWidth: {
         'max-w-8': '2rem',
-      }
+      },
     },
   },
   variants: {
     extend: {
       backgroundColor: ['disabled'],
       textColor: ['disabled'],
-      cursor: ['disabled',]
+      cursor: ['disabled'],
     },
   },
   plugins: [
     plugin(({ addComponents }) => {
-      const components = {};
+      const components = {}
 
       const styles = {
         bg: 'backgroundColor',
@@ -33,7 +35,7 @@ module.exports = {
 
       const colors = {
         white: '255',
-        black: '34'
+        black: '34',
       }
 
       for (let i = 0; i <= 10; i++) {
@@ -41,7 +43,7 @@ module.exports = {
         for (const [sk, sv] of Object.entries(styles)) {
           for (const [ck, cv] of Object.entries(colors)) {
             components[`.${sk}-${ck}-${i}0`] = {
-              [sv]: `rgba(${cv}, ${cv}, ${cv}, ${a})`
+              [sv]: `rgba(${cv}, ${cv}, ${cv}, ${a})`,
             }
           }
         }

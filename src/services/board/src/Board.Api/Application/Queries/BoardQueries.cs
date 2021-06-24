@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
@@ -74,8 +75,16 @@ namespace Board.Api.Application.Queries
         private static (string, IDictionary<string, dynamic>) GetSql(Criteria criteria)
         {
             var @params = new Dictionary<string, dynamic>();
-            var sql = "FROM boards b";
-            string m = string.Empty;
+            var sql = new StringBuilder("FROM boards b");
+            var where = new List<string>();
+            var group = new List<string>();
+            var m = string.Empty;
+
+            if (criteria.BoardIds?.Length > 0)
+            {
+                where.Add("b.id = ANY(@ids)");
+                @params["ids"] = criteria.BoardIds;
+            }
 
             if (!string.IsNullOrWhiteSpace(criteria.UserId))
             {
@@ -90,9 +99,25 @@ namespace Board.Api.Application.Queries
             }
 
             if (m != string.Empty)
-                sql = $"{sql} LEFT JOIN members m ON m.board_id = b.id {m} WHERE m.id IS NOT NULL GROUP BY b.id";
+            {
+                sql.Append($" LEFT JOIN members m ON m.board_id = b.id {m}");
+                where.Add("m.id IS NOT NULL");
+                group.Add("b.id");
+            }
 
-            return (sql, @params);
+            if (where.Any())
+            {
+                sql.Append(" WHERE ");
+                sql.Append(string.Join(" AND ", where));
+            }
+
+            if (group.Any())
+            {
+                sql.Append(" GROUP BY ");
+                sql.Append(string.Join(", ", group));
+            }
+
+            return (sql.ToString(), @params);
         }
     }
 }

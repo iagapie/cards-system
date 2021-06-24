@@ -19,10 +19,10 @@ type Handler struct {
 }
 
 func (h *Handler) Register(router *mux.Router) {
-	router.Handle(meURL, h.Auth(h.me, user_service.AuthClaimsDTO{})).Methods(http.MethodGet, http.MethodOptions)
+	router.Handle(meURL, h.Auth(h.Me, user_service.AuthClaimsDTO{})).Methods(http.MethodGet, http.MethodOptions)
 }
 
-func (h *Handler) me(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) Me(w http.ResponseWriter, r *http.Request) error {
 	h.Log.Info("ME")
 
 	h.Log.Debug("get auth claims dto from context")

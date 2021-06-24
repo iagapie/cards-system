@@ -31,9 +31,11 @@ const authSlice = createSlice({
   reducers: {
     login: (state) => {
       state.loading = true
+      state.error = ''
     },
     loginByToken: (state) => {
       state.loading = true
+      state.error = ''
     },
     loginSuccess: (state, { payload }) => {
       state.currentUser = payload
