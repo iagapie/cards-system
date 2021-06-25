@@ -23,6 +23,10 @@ type AuthClaimsDTO struct {
 	Email string `context:"claim_subject" validate:"required,email"`
 }
 
+type FilterDTO struct {
+	UUID []string `query:"uuid" validate:"omitempty,dive,uuid4"`
+}
+
 type User struct {
 	UUID      string    `json:"uuid,omitempty"`
 	Name      string    `json:"name,omitempty"`

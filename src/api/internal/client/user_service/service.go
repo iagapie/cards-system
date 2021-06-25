@@ -20,6 +20,7 @@ const usersURL = "/api/v1/users"
 type UserService interface {
 	GetByEmailAndPassword(ctx context.Context, email, password string) (User, error)
 	GetByUUID(ctx context.Context, uuid string) (User, error)
+	GetByFilter(ctx context.Context, filter FilterDTO) (UserList, error)
 	GetBy(ctx context.Context, query url.Values) (UserList, error)
 	Create(ctx context.Context, dto CreateUserDTO) (User, error)
 }
@@ -73,6 +74,20 @@ func (c *client) GetByUUID(ctx context.Context, uuid string) (User, error) {
 		return user, fmt.Errorf("failed to decode body response. error: %w", err)
 	}
 	return user, nil
+}
+
+func (c *client) GetByFilter(ctx context.Context, filter FilterDTO) (UserList, error) {
+	c.request.Log.Debug("create query for rest context")
+	query := make(url.Values)
+
+	if l := len(filter.UUID); l > 0 {
+		query["uuid"] = filter.UUID
+		query.Set("limit", fmt.Sprintf("%d", l))
+	} else {
+		query.Set("limit", "100")
+	}
+
+	return c.GetBy(ctx, query)
 }
 
 func (c *client) GetBy(ctx context.Context, query url.Values) (UserList, error) {

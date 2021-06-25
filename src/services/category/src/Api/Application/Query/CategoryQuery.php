@@ -40,7 +40,7 @@ final class CategoryQuery implements CategoryQueryInterface
             LEFT JOIN '.self::PERMISSIONS.' p ON p.category_id = c.id
             WHERE c.id = :id OR c.parent_id = :id
             GROUP BY c.id
-            ORDER BY c.position ASC, c.updated_at DESC
+            ORDER BY c.position ASC, c.created_at ASC
         ';
 
         $rows = $this->connection->fetchAllAssociativeIndexed($sql, ['id' => $id]);
@@ -84,7 +84,7 @@ final class CategoryQuery implements CategoryQueryInterface
             ->where('1 = 1')
             ->groupBy('c.id')
             ->orderBy('c.position', 'ASC')
-            ->addOrderBy('c.updated_at', 'DESC')
+            ->addOrderBy('c.created_at', 'ASC')
             ->setMaxResults($range->getLimit())
             ->setFirstResult($range->getSkip());
 
@@ -139,14 +139,14 @@ final class CategoryQuery implements CategoryQueryInterface
         return array_merge(
             [
                 'id' => $row['id'] ?? '',
-                'parentId' => $row['parent_id'] ?: null,
-                'boardId' => $row['board_id'],
-                'createdBy' => $row['created_by'],
+                'parent_id' => $row['parent_id'] ?: null,
+                'board_id' => $row['board_id'],
+                'created_by' => $row['created_by'],
                 'name' => $row['name'],
                 'description' => $row['description'] ?: null,
                 'position' => (int)$row['position'],
-                'createdAt' => $ca->format('c'),
-                'updatedAt' => $ua->format('c'),
+                'created_at' => $ca->format('c'),
+                'updated_at' => $ua->format('c'),
                 'permissions' => $permissions,
             ],
             $append

@@ -105,11 +105,11 @@ final class TagQuery implements TagQueryInterface
 
         return [
             'id' => $row['id'],
-            'boardId' => $row['board_id'],
+            'board_id' => $row['board_id'],
             'name' => $row['name'],
             'color' => $row['color'],
-            'createdAt' => $ca->format('c'),
-            'updatedAt' => $ua->format('c'),
+            'created_at' => $ca->format('c'),
+            'updated_at' => $ua->format('c'),
         ];
     }
 }

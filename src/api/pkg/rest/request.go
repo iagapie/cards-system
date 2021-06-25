@@ -80,6 +80,10 @@ func (r *Request) sendReq(req *http.Request) Response {
 			httpErr.SetMessage(http.StatusText(resp.StatusCode)).SetInternal(err)
 		}
 
+		if httpErr.Message == "" {
+			httpErr.SetMessage(http.StatusText(resp.StatusCode))
+		}
+
 		return Response{Error: httpErr}
 	}
 

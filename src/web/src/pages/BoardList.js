@@ -6,7 +6,7 @@ import { getBoards } from '../redux/selectors'
 import { boardsLoad, clearError } from '../redux/slices/boards'
 import { Loader } from '../components/Loader'
 import { DocumentTitle } from '../components/DocumentTitle'
-import { BoardCard, NewBoardCard } from '../components/BoardList'
+import { BoardItem, NewBoard } from '../components/BoardList'
 
 const BoardList = () => {
   const { boards, loading } = useSelector(getBoards)
@@ -23,89 +23,6 @@ const BoardList = () => {
     }
   }, [dispatch])
 
-  // let boards = [
-  //   {
-  //     id: 'board1',
-  //     name: 'Books',
-  //     color: 'sky',
-  //   },
-  //   {
-  //     id: 'board2',
-  //     name: 'Finance planning',
-  //     color: 'indigo',
-  //   },
-  //   {
-  //     id: 'board3',
-  //     name: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusamus asperiores aut consectetur culpa dolor dolorem, impedit magnam perferendis placeat sint ullam vel velit! Ducimus eius modi quam ut! Placeat.',
-  //     color: 'red',
-  //   },
-  //   {
-  //     id: 'board4',
-  //     name: 'Lorem ipsum dolor sit amet',
-  //     color: 'yellow',
-  //   },
-  //   {
-  //     id: 'board5',
-  //     name: 'Books',
-  //     color: 'sky',
-  //   },
-  //   {
-  //     id: 'board6',
-  //     name: 'Finance planning',
-  //     color: 'indigo',
-  //   },
-  //   {
-  //     id: 'board7',
-  //     name: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusamus asperiores aut consectetur culpa dolor dolorem, impedit magnam perferendis placeat sint ullam vel velit! Ducimus eius modi quam ut! Placeat.',
-  //     color: 'red',
-  //   },
-  //   {
-  //     id: 'board8',
-  //     name: 'Lorem ipsum dolor sit amet',
-  //     color: 'yellow',
-  //   },
-  //   {
-  //     id: 'board1',
-  //     name: 'Books',
-  //     color: 'sky',
-  //   },
-  //   {
-  //     id: 'board2',
-  //     name: 'Finance planning',
-  //     color: 'indigo',
-  //   },
-  //   {
-  //     id: 'board3',
-  //     name: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusamus asperiores aut consectetur culpa dolor dolorem, impedit magnam perferendis placeat sint ullam vel velit! Ducimus eius modi quam ut! Placeat.',
-  //     color: 'red',
-  //   },
-  //   {
-  //     id: 'board4',
-  //     name: 'Lorem ipsum dolor sit amet',
-  //     color: 'yellow',
-  //   },
-  //   {
-  //     id: 'board5',
-  //     name: 'Books',
-  //     color: 'sky',
-  //   },
-  //   {
-  //     id: 'board6',
-  //     name: 'Finance planning',
-  //     color: 'indigo',
-  //   },
-  //   {
-  //     id: 'board7',
-  //     name: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusamus asperiores aut consectetur culpa dolor dolorem, impedit magnam perferendis placeat sint ullam vel velit! Ducimus eius modi quam ut! Placeat.',
-  //     color: 'red',
-  //   },
-  //   {
-  //     id: 'board8',
-  //     name: 'Lorem ipsum dolor sit amet',
-  //     color: 'yellow',
-  //   },
-  // ]
-
   return (
     <>
       <DocumentTitle title="Boards" />
@@ -121,9 +38,9 @@ const BoardList = () => {
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-4">
               {boards.map((board) => (
-                <BoardCard key={board.id} board={board} />
+                <BoardItem key={board.id} board={board} />
               ))}
-              {canCreateBoard && <NewBoardCard />}
+              {canCreateBoard && <NewBoard />}
             </div>
           </div>
         </main>

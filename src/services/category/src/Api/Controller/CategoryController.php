@@ -92,11 +92,11 @@ final class CategoryController
 
         $command = new CreateCategoryCommand(
             $id,
-            $data['parentId'] ?? null,
-            $data['boardId'] ?? '',
+            $data['parent_id'] ?? null,
+            $data['board_id'] ?? '',
             $data['name'] ?? '',
             $data['description'] ?? null,
-            $data['createdBy'] ?? '',
+            $data['created_by'] ?? '',
             (int)($data['position'] ?? 0),
         );
 
@@ -116,7 +116,7 @@ final class CategoryController
 
         $command = new UpdateCategoryCommand(
             $id,
-            $data['parentId'] ?? null,
+            $data['parent_id'] ?? null,
             $data['name'] ?? '',
             $data['description'] ?? null,
             (int)($data['position'] ?? 0),

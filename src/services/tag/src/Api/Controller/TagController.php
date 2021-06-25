@@ -86,7 +86,7 @@ final class TagController
 
         $id = Uuid::uuid4()->toString();
 
-        $command = new CreateTagCommand($id, $data['boardId'] ?? '', $data['name'] ?? '', $data['color'] ?? '');
+        $command = new CreateTagCommand($id, $data['board_id'] ?? '', $data['name'] ?? '', $data['color'] ?? '');
 
         $this->mediator->send($command);
 

@@ -7,7 +7,7 @@ export const initialState = {
 }
 
 const createBoardSlice = createSlice({
-  name: 'board',
+  name: 'createBoard',
   initialState,
   reducers: {
     createBoard: (state) => {

@@ -5,6 +5,7 @@ import tokenReducer from './token'
 import boardsReducer from './boards'
 import boardReducer from './board'
 import createBoardReducer from './createBoard'
+import createCategoryReducer from './createCategory'
 
 const rootReducer = combineReducers({
   authState: authReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   boardsState: boardsReducer,
   boardState: boardReducer,
   createBoardState: createBoardReducer,
+  createCategoryState: createCategoryReducer,
 })
 
 export default rootReducer

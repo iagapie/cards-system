@@ -13,6 +13,7 @@ import { ROUTES } from '../../constants/routes'
 import { APP } from '../../constants/app'
 import { CreateBoardDialog } from '../BoardList/CreateBoardDialog'
 import { setIsOpen } from '../../redux/slices/createBoard'
+import { Gravatar } from '../Gravatar'
 
 export const Header = ({ className }) => {
   const { isAuthenticated, currentUser } = useSelector(getAuth)
@@ -51,11 +52,11 @@ export const Header = ({ className }) => {
             )}
             <li>
               <Menu>
-                <Menu.Button className="block focus:outline-none">
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src="https://trello-members.s3.amazonaws.com/57865bc0db707d97e6cdb6ad/98325c199f92181706beffbfc15e3a9d/170.png"
-                    alt="Igor Agapie (iagapie)"
+                <Menu.Button className="block ring-2 ring-transparent rounded-full hover:ring-gray-100 focus:outline-none">
+                  <Gravatar
+                    email={currentUser.email}
+                    alt={currentUser.name}
+                    className="row-span-2 h-7 w-7 rounded-full"
                   />
                 </Menu.Button>
                 <Transition
@@ -72,10 +73,10 @@ export const Header = ({ className }) => {
                       Account
                     </div>
                     <div className="grid grid-rows-2 grid-flow-col auto-cols-max gap-x-2 mx-3 py-3 border-b border-gray-200">
-                      <img
-                        className="row-span-2 h-10 rounded-full"
-                        src="https://trello-members.s3.amazonaws.com/57865bc0db707d97e6cdb6ad/98325c199f92181706beffbfc15e3a9d/170.png"
-                        alt="Igor Agapie (iagapie)"
+                      <Gravatar
+                        email={currentUser.email}
+                        alt={currentUser.name}
+                        className="row-span-2 h-10 w-10 rounded-full"
                       />
                       <div className="text-sm text-blue-gray-800">{currentUser.name}</div>
                       <div className="text-sm text-gray-400">{currentUser.email}</div>

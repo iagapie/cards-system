@@ -45,7 +45,7 @@ type (
 	}
 )
 
-const timeout = 5 * time.Second
+const timeout = 10 * time.Second
 
 func Run(cfg Config, log logrus.FieldLogger, router http.Handler) {
 	httpHandler := router

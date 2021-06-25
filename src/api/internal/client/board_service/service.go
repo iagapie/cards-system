@@ -105,7 +105,7 @@ func (c *client) One(ctx context.Context, id string, userID string) (Board, erro
 		}
 	}
 
-	return board, gof.ErrNotFound.SetInternal(memberNotFound)
+	return board, gof.ErrNotFound.SetMessage("Not Found").SetInternal(memberNotFound)
 }
 
 func (c *client) Create(ctx context.Context, dto CreateBoardDTO) (string, error) {

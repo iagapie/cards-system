@@ -22,6 +22,8 @@ module.exports = {
       backgroundColor: ['disabled'],
       textColor: ['disabled'],
       cursor: ['disabled'],
+      ringWidth: ['hover'],
+      ringColor: ['hover'],
     },
   },
   plugins: [

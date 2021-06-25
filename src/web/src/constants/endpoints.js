@@ -8,9 +8,10 @@ export const ENDPOINTS = {
     LOGIN: `${v1}/sign-in`,
     REGISTRATION: `${v1}/sign-up`,
   },
-  USER: {
-    ME: `${v1}/me`,
-  },
+  ME: `${v1}/me`,
+  USERS: `${v1}/users`,
   BOARDS: `${v1}/boards`,
   BOARD: (id) => `${v1}/boards/${id}`,
+  CATEGORIES: `${v1}/categories`,
+  TAGS: `${v1}/tags`,
 }

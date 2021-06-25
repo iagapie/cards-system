@@ -1,2 +1,2 @@
-export { BoardCard } from './BoardCard'
-export { NewBoardCard } from './NewBoardCard'
+export { BoardItem } from './BoardItem'
+export { NewBoard } from './NewBoard'

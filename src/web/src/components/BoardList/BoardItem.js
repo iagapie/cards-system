@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { ROUTES } from '../../constants/routes'
 import { COLORS } from '../../constants/colors'
 
-export const BoardCard = ({ board, ...rest }) => {
+export const BoardItem = ({ board, ...rest }) => {
   const color = board.color || 'sky'
 
   return (
@@ -15,7 +15,7 @@ export const BoardCard = ({ board, ...rest }) => {
   )
 }
 
-BoardCard.propTypes = {
+BoardItem.propTypes = {
   board: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

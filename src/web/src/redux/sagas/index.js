@@ -1,8 +1,8 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 
-import { apiMe } from '../../api/user'
+import { apiMe, apiUsers } from '../../api/user'
 import { apiLogin, apiRegistration } from '../../api/auth'
-import { apiAllBoards, apiCreateBoard, apiGetBoard } from '../../api/board'
+import { apiBoards, apiCreateBoard, apiGetBoard } from '../../api/board'
 import { removeAccessTokens, setAccessTokens } from '../slices/token'
 import { getToken, getAuth } from '../selectors'
 import history from '../../utils/history'
@@ -19,8 +19,11 @@ import {
   noLoading,
 } from '../slices/auth'
 import { boardsAdd, boardsError, boardsLoad, boardsSuccess } from '../slices/boards'
-import { boardError, boardLoad, boardSuccess } from '../slices/board'
+import { boardAddCategory, boardError, boardLoad, boardSuccess } from '../slices/board'
 import { createBoard, createBoardError, createBoardSuccess } from '../slices/createBoard'
+import { apiCategories, apiCreateCategory } from '../../api/category'
+import { apiTags } from '../../api/tag'
+import { createCategory, createCategoryError, createCategorySuccess } from '../slices/createCategory'
 
 function* saveTokens(payload) {
   const data = {
@@ -88,7 +91,7 @@ function* fetchBoards() {
   const { accessToken } = yield select(getToken)
 
   try {
-    const { data } = yield call(apiAllBoards, accessToken)
+    const { data } = yield call(apiBoards, accessToken)
     yield put(boardsSuccess(data.boards))
   } catch (error) {
     yield put(boardsError(error.message))
@@ -99,8 +102,24 @@ function* fetchBoard({ payload }) {
   const { accessToken } = yield select(getToken)
 
   try {
-    const { data } = yield call(apiGetBoard, accessToken, payload)
-    yield put(boardSuccess(data))
+    const { data: board } = yield call(apiGetBoard, accessToken, payload)
+    const success = { board }
+
+    const categories = yield call(apiCategories, accessToken, { board: payload })
+    success.categories = categories.data.categories
+
+    const tags = yield call(apiTags, accessToken, { board: payload })
+    success.tags = tags.data.tags
+
+    if (board.members.length > 0) {
+      const userIds = board.members.map((m) => m.user_id)
+      const users = yield call(apiUsers, accessToken, { uuid: userIds })
+      success.members = users.data.users
+    }
+
+    // TODO: get cards
+
+    yield put(boardSuccess(success))
   } catch (error) {
     yield put(boardError(error.message))
   }
@@ -121,6 +140,20 @@ function* addBoard({ payload }) {
   }
 }
 
+function* addCategory({ payload }) {
+  const { accessToken } = yield select(getToken)
+
+  try {
+    const { headers } = yield call(apiCreateCategory, accessToken, payload)
+    const id = headers['location'].split('/').pop()
+    const { data } = yield call(apiCategories, accessToken, { board: payload.boardId, category: id })
+    yield put(boardAddCategory(data.categories[0]))
+    yield put(createCategorySuccess())
+  } catch (error) {
+    yield put(createCategoryError(error.message))
+  }
+}
+
 function* rootSaga() {
   yield all([
     takeLatest(loginByToken.type, loginUser),
@@ -130,6 +163,7 @@ function* rootSaga() {
     takeLatest(boardsLoad.type, fetchBoards),
     takeLatest(boardLoad.type, fetchBoard),
     takeLatest(createBoard.type, addBoard),
+    takeLatest(createCategory.type, addCategory),
   ])
 }
 

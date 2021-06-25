@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useMemo } from 'react'
 import { Switch, Route, useLocation } from 'react-router-dom'
 
 import { PrivateRoute, PublicRoute } from '../components/Router'
@@ -7,6 +7,9 @@ import Header from '../components/Header'
 import { Loader } from '../components/Loader'
 import { NotFound } from './NotFound'
 import { DocumentTitle } from '../components/DocumentTitle'
+import { useSelector } from 'react-redux'
+import { getBoard } from '../redux/selectors'
+import { COLORS } from '../constants/colors'
 
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './Home'))
 const Login = lazy(() => import(/* webpackChunkName: "login" */ './Login'))
@@ -17,9 +20,11 @@ const Board = lazy(() => import(/* webpackChunkName: "board" */ './Board'))
 const RootRouter = () => {
   const { pathname } = useLocation()
   const withHeader = ROUTES.ROOT !== pathname && ![ROUTES.AUTH.LOGIN, ROUTES.AUTH.REGISTRATION].includes(pathname)
+  const { board } = useSelector(getBoard)
+  const bg = useMemo(() => (board ? COLORS.BOARD.BG[board.color] : 'bg-sky-600'), [board])
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-sky-600">
+    <div className={`flex flex-col h-screen overflow-hidden ${bg}`}>
       <DocumentTitle />
       {withHeader && <Header />}
       <Suspense fallback={<Loader />}>

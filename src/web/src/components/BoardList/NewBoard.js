@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux'
 
 import { setIsOpen } from '../../redux/slices/createBoard'
 
-export const NewBoardCard = () => {
+export const NewBoard = () => {
   const dispatch = useDispatch()
 
   const openCreateBoard = () => {
