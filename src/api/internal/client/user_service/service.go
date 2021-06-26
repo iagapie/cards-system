@@ -60,9 +60,13 @@ func (c *client) GetByEmailAndPassword(ctx context.Context, email, password stri
 func (c *client) GetByUUID(ctx context.Context, uuid string) (User, error) {
 	var user User
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx: ctx,
+		Ctx: reqCtx,
 		URI: fmt.Sprintf("%s/%s", usersURL, uuid),
 	}
 
@@ -93,9 +97,13 @@ func (c *client) GetByFilter(ctx context.Context, filter FilterDTO) (UserList, e
 func (c *client) GetBy(ctx context.Context, query url.Values) (UserList, error) {
 	var list UserList
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:   ctx,
+		Ctx:   reqCtx,
 		URI:   usersURL,
 		Query: query,
 	}
@@ -118,9 +126,13 @@ func (c *client) Create(ctx context.Context, dto CreateUserDTO) (User, error) {
 		return User{}, fmt.Errorf("failed to marshal dto. error: %w", err)
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:    ctx,
+		Ctx:    reqCtx,
 		URI:    usersURL,
 		Method: http.MethodPost,
 		Body:   bytes.NewReader(dataBytes),

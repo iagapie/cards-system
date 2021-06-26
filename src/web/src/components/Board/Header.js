@@ -1,16 +1,20 @@
 import { useMemo } from 'react'
-import { DotsHorizontalIcon, LockClosedIcon, LockOpenIcon, UserCircleIcon } from '@heroicons/react/outline'
+import { DotsHorizontalIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/react/outline'
 import PropTypes from 'prop-types'
 import { Gravatar } from '../Gravatar'
+import { useBoardState } from '../../contexts/BoardStateContext'
 
 export const Header = ({ board, members }) => {
   const isPrivate = useMemo(() => Object.keys(members).length <= 1, [members])
+  const { openingMenu, setOpeningMenu } = useBoardState()
+
+  const openMenu = () => setOpeningMenu(true)
 
   return (
     <div className="flex justify-between space-x-2">
       <div className="flex space-x-2 overflow-hidden">
-        <div className="btn-white-30 font-bold">
-          <span className="truncate">{board.name}</span>
+        <div className="btn-white-30 font-bold overflow-hidden">
+          <button className="truncate focus:outline-none">{board.name}</button>
         </div>
         <div className="hidden md:block w-px bg-white-20 my-2.5" />
         <div className="btn-white-30">
@@ -42,10 +46,12 @@ export const Header = ({ board, members }) => {
         </button>
       </div>
       <div className="flex space-x-2">
-        <button className="btn-white-30">
-          <DotsHorizontalIcon className="w-5 h-5" />
-          <span className="hidden md:inline-block">Show menu</span>
-        </button>
+        {!openingMenu && (
+          <button className="btn-white-30" onClick={openMenu}>
+            <DotsHorizontalIcon className="w-5 h-5" />
+            <span className="hidden md:inline-block">Show menu</span>
+          </button>
+        )}
       </div>
     </div>
   )

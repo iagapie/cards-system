@@ -4,10 +4,12 @@ import { PlusIcon, XIcon } from '@heroicons/react/outline'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { getCreateCategory } from '../../redux/selectors'
 import { createCategory } from '../../redux/slices/createCategory'
+import { COLORS } from '../../constants/colors'
 
-export const AddCategory = ({ boardId, position }) => {
+export const AddCategory = ({ boardId, position, color }) => {
   const { loading } = useSelector(getCreateCategory)
   const dispatch = useDispatch()
   const [containerClass, setContainerClass] = useState('')
@@ -42,28 +44,29 @@ export const AddCategory = ({ boardId, position }) => {
   return (
     <div className={`board-add-category ${containerClass}`} ref={ref}>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-        <button onClick={open} className="board-add-category__add-btn">
+        <button onClick={open} className="board-add-category__btn-open">
           <PlusIcon className="w-4 h-4" />
           <span className="pl-2">Add another list</span>
         </button>
         <input
           type="text"
-          className="board-add-category__input"
+          autoComplete="off"
+          className={`board-add-category__input ${COLORS.BOARD.INPUT_FOCUS[color]}`}
           placeholder="Enter list title..."
           {...register('name', {
             required: 'required',
             maxLength: 150,
           })}
         />
-        <div className="board-add-category__btn-bar">
+        <div className="board-add-category__toolbar">
           <button
             type="submit"
             disabled={disabled}
-            className="px-3 py-1.5 text-sm text-white rounded bg-sky-600 hover:bg-sky-700 focus:outline-none disabled:bg-gray-400 disabled:cursor-default"
+            className={`board-add-category__btn-add ${COLORS.BOARD.BTN[color]} ${COLORS.BOARD.BTN_HOVER[color]}`}
           >
             Add list
           </button>
-          <button onClick={close} className="focus:outline-none text-gray-500 hover:text-black-100">
+          <button onClick={close} className="board-add-category__btn-close">
             <XIcon className="w-6 h-6" />
           </button>
         </div>
@@ -75,4 +78,5 @@ export const AddCategory = ({ boardId, position }) => {
 AddCategory.propTypes = {
   boardId: PropTypes.string.isRequired,
   position: PropTypes.number.isRequired,
+  color: PropTypes.string.isRequired,
 }

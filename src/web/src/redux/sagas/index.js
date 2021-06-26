@@ -19,7 +19,7 @@ import {
   noLoading,
 } from '../slices/auth'
 import { boardsAdd, boardsError, boardsLoad, boardsSuccess } from '../slices/boards'
-import { boardAddCategory, boardError, boardLoad, boardSuccess } from '../slices/board'
+import * as boardSlice from '../slices/board'
 import { createBoard, createBoardError, createBoardSuccess } from '../slices/createBoard'
 import { apiCategories, apiCreateCategory } from '../../api/category'
 import { apiTags } from '../../api/tag'
@@ -103,25 +103,53 @@ function* fetchBoard({ payload }) {
 
   try {
     const { data: board } = yield call(apiGetBoard, accessToken, payload)
-    const success = { board }
+    yield put(boardSlice.setBoard(board))
 
-    const categories = yield call(apiCategories, accessToken, { board: payload })
-    success.categories = categories.data.categories
+    const {
+      data: { categories },
+    } = yield call(apiCategories, accessToken, { board: payload })
+    yield put(boardSlice.setCategories(categories))
 
-    const tags = yield call(apiTags, accessToken, { board: payload })
-    success.tags = tags.data.tags
+    const {
+      data: { tags },
+    } = yield call(apiTags, accessToken, { board: payload })
+    yield put(boardSlice.setTags(tags))
 
     if (board.members.length > 0) {
       const userIds = board.members.map((m) => m.user_id)
-      const users = yield call(apiUsers, accessToken, { uuid: userIds })
-      success.members = users.data.users
+      const {
+        data: { users },
+      } = yield call(apiUsers, accessToken, { uuid: userIds })
+      yield put(boardSlice.setMembers(users))
     }
 
     // TODO: get cards
+    if (categories.length) {
+      const getRandomIntInclusive = (start, end) => {
+        const min = Math.ceil(start)
+        const max = Math.floor(end)
+        return Math.floor(Math.random() * (max - min + 1)) + min
+      }
+      let index = 0
+      const cards = categories.slice(0, categories.length - 1).reduce(
+        (data, category) => [
+          ...data,
+          ...[...Array(getRandomIntInclusive(0, 50)).keys()].map((i) => ({
+            id: `card${index++}`,
+            name: `Lorem ipsum dolor sit amet ${index}.`,
+            category_id: category.id,
+            position: getRandomIntInclusive(-30, 40),
+            created_at: '2021-06-25T00:23:13+03:00',
+          })),
+        ],
+        [],
+      )
+      yield put(boardSlice.setCards(cards))
+    }
 
-    yield put(boardSuccess(success))
+    yield put(boardSlice.success())
   } catch (error) {
-    yield put(boardError(error.message))
+    yield put(boardSlice.setError(error.message))
   }
 }
 
@@ -147,7 +175,7 @@ function* addCategory({ payload }) {
     const { headers } = yield call(apiCreateCategory, accessToken, payload)
     const id = headers['location'].split('/').pop()
     const { data } = yield call(apiCategories, accessToken, { board: payload.boardId, category: id })
-    yield put(boardAddCategory(data.categories[0]))
+    yield put(boardSlice.addCategory(data.categories[0]))
     yield put(createCategorySuccess())
   } catch (error) {
     yield put(createCategoryError(error.message))
@@ -161,7 +189,7 @@ function* rootSaga() {
     takeLatest(logout.type, logoutUser),
     takeLatest(registration.type, registrationUser),
     takeLatest(boardsLoad.type, fetchBoards),
-    takeLatest(boardLoad.type, fetchBoard),
+    takeLatest(boardSlice.load.type, fetchBoard),
     takeLatest(createBoard.type, addBoard),
     takeLatest(createCategory.type, addCategory),
   ])

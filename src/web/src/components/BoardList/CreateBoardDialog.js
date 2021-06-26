@@ -43,7 +43,7 @@ export const CreateBoardDialog = () => {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeDialog}>
+      <Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" onClose={closeDialog}>
         <div className="min-h-screen px-3 text-center">
           <Transition.Child
             as={Fragment}

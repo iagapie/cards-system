@@ -50,9 +50,13 @@ func (c *client) Many(ctx context.Context, filter FilterDTO) (CategoryList, erro
 		query["category"] = filter.CategoryIds
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:   ctx,
+		Ctx:   reqCtx,
 		URI:   categoriesURL,
 		Query: query,
 	}
@@ -75,9 +79,13 @@ func (c *client) Create(ctx context.Context, dto CreateCategoryDTO) (string, err
 		return "", fmt.Errorf("failed to marshal dto. error: %w", err)
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:    ctx,
+		Ctx:    reqCtx,
 		URI:    categoriesURL,
 		Method: http.MethodPost,
 		Body:   bytes.NewReader(dataBytes),

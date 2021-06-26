@@ -43,9 +43,13 @@ func (c *client) Many(ctx context.Context, filter FilterDTO) (TagList, error) {
 		query.Set("board", filter.BoardID)
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:   ctx,
+		Ctx:   reqCtx,
 		URI:   tagsURL,
 		Query: query,
 	}

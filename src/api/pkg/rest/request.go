@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -34,12 +33,8 @@ func (r *Request) Send(ctx Context) Response {
 	}
 	r.Log.Tracef("url: %s", reqURL)
 
-	r.Log.Debug("create timeout context")
-	reqCtx, cancel := context.WithTimeout(ctx.Ctx, r.Cfg.Timeout)
-	defer cancel()
-
 	r.Log.Debug("create new request")
-	req, err := http.NewRequestWithContext(reqCtx, ctx.Method, reqURL, ctx.Body)
+	req, err := http.NewRequestWithContext(ctx.Ctx, ctx.Method, reqURL, ctx.Body)
 	if err != nil {
 		return Response{Error: fmt.Errorf("failed to create new request. error: %w", err)}
 	}

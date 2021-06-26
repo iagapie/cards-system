@@ -10,6 +10,7 @@ import { DocumentTitle } from '../components/DocumentTitle'
 import { useSelector } from 'react-redux'
 import { getBoard } from '../redux/selectors'
 import { COLORS } from '../constants/colors'
+import { BoardStateProvider } from '../contexts/BoardStateContext'
 
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './Home'))
 const Login = lazy(() => import(/* webpackChunkName: "login" */ './Login'))
@@ -26,32 +27,34 @@ const RootRouter = () => {
   return (
     <div className={`flex flex-col h-screen overflow-hidden ${bg}`}>
       <DocumentTitle />
-      {withHeader && <Header />}
-      <Suspense fallback={<Loader />}>
-        <Switch>
-          <Route exact path={ROUTES.ROOT}>
-            <Home />
-          </Route>
-          <PublicRoute exact path={ROUTES.AUTH.LOGIN}>
-            <Login />
-          </PublicRoute>
-          <PublicRoute exact path={ROUTES.AUTH.REGISTRATION}>
-            <Registration />
-          </PublicRoute>
-          <PrivateRoute exact path={ROUTES.BOARD.LIST}>
-            <BoardList />
-          </PrivateRoute>
-          <PrivateRoute exact path={ROUTES.BOARD.ONE()}>
-            <Board />
-          </PrivateRoute>
-          <Route exact path={ROUTES.ERROR.NOT_FOUND}>
-            <NotFound />
-          </Route>
-          <Route path="*">
-            <NotFound />
-          </Route>
-        </Switch>
-      </Suspense>
+      <BoardStateProvider>
+        {withHeader && <Header />}
+        <Suspense fallback={<Loader />}>
+          <Switch>
+            <Route exact path={ROUTES.ROOT}>
+              <Home />
+            </Route>
+            <PublicRoute exact path={ROUTES.AUTH.LOGIN}>
+              <Login />
+            </PublicRoute>
+            <PublicRoute exact path={ROUTES.AUTH.REGISTRATION}>
+              <Registration />
+            </PublicRoute>
+            <PrivateRoute exact path={ROUTES.BOARD.LIST}>
+              <BoardList />
+            </PrivateRoute>
+            <PrivateRoute exact path={ROUTES.BOARD.ONE()}>
+              <Board />
+            </PrivateRoute>
+            <Route exact path={ROUTES.ERROR.NOT_FOUND}>
+              <NotFound />
+            </Route>
+            <Route path="*">
+              <NotFound />
+            </Route>
+          </Switch>
+        </Suspense>
+      </BoardStateProvider>
     </div>
   )
 }

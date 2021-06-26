@@ -63,9 +63,13 @@ func (c *client) getBoards(ctx context.Context, userID string, id ...string) (Bo
 		query["board_id"] = id
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:   ctx,
+		Ctx:   reqCtx,
 		URI:   boardsURL,
 		Query: query,
 	}
@@ -84,9 +88,13 @@ func (c *client) getBoards(ctx context.Context, userID string, id ...string) (Bo
 func (c *client) One(ctx context.Context, id string, userID string) (Board, error) {
 	var board Board
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx: ctx,
+		Ctx: reqCtx,
 		URI: fmt.Sprintf("%s/%s", boardsURL, id),
 	}
 
@@ -115,9 +123,13 @@ func (c *client) Create(ctx context.Context, dto CreateBoardDTO) (string, error)
 		return "", fmt.Errorf("failed to marshal dto. error: %w", err)
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:    ctx,
+		Ctx:    reqCtx,
 		URI:    boardsURL,
 		Method: http.MethodPost,
 		Body:   bytes.NewReader(dataBytes),
@@ -156,9 +168,13 @@ func (c *client) Update(ctx context.Context, id string, userID string, dto Updat
 		return fmt.Errorf("failed to marshal dto. error: %w", err)
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:    ctx,
+		Ctx:    reqCtx,
 		URI:    fmt.Sprintf("%s/%s", boardsURL, id),
 		Method: http.MethodPut,
 		Body:   bytes.NewReader(dataBytes),
@@ -179,9 +195,13 @@ func (c *client) Delete(ctx context.Context, id string, userID string) error {
 		return gof.ErrNotFound.SetInternal(memberNotFound)
 	}
 
+	c.request.Log.Debug("create timeout context")
+	reqCtx, cancel := context.WithTimeout(ctx, c.request.Cfg.Timeout)
+	defer cancel()
+
 	c.request.Log.Debug("create rest context")
 	restCtx := rest.Context{
-		Ctx:    ctx,
+		Ctx:    reqCtx,
 		URI:    fmt.Sprintf("%s/%s", boardsURL, id),
 		Method: http.MethodDelete,
 	}
