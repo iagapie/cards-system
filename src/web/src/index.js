@@ -2,17 +2,20 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import 'regenerator-runtime/runtime'
 
-import { store, sagaMiddleware } from './redux/store'
-import rootSaga from './redux/sagas'
-import { App } from './components/App'
+import GlobalCss from '@/theme/Global.css'
+import { loadFonts } from '@/utils/loadFonts'
 
-import './styles/index.scss'
+import { sagaMiddleware, store } from './store'
+import rootSaga from './store/rootSaga'
+import { App } from './App'
 
 sagaMiddleware.run(rootSaga)
 
 render(
   <Provider store={store}>
+    <GlobalCss />
     <App />
   </Provider>,
   document.getElementById('root'),
+  loadFonts,
 )

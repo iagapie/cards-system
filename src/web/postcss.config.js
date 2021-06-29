@@ -1,9 +1,16 @@
-const tailwindcss = require('tailwindcss')
-const autoprefixer = require('autoprefixer')
+const flexboxFixes = require('postcss-flexbugs-fixes')
+const presetEnv = require('postcss-preset-env')
 
 module.exports = {
   plugins: [
-    tailwindcss,
-    autoprefixer,
+    flexboxFixes,
+    presetEnv({
+      browsers: 'last 2 versions',
+      autoprefixer: {
+        flexbox: 'no-2009',
+        grid: 'autoplace'
+      },
+      stage: 3,
+    }),
   ],
 }

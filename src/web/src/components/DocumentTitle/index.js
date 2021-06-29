@@ -1,1 +1,0 @@
-export { DocumentTitle } from './DocumentTitle'
