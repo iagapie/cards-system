@@ -4,18 +4,28 @@ Cookie.defaults = {
   sameSite: 'Lax',
 }
 
-const Cookies = {
-  get: (key, defaultValue) => {
+export class CookiesService {
+  constructor(store) {
+    this.store = store
+  }
+
+  get(key, defaultValue) {
     try {
-      const item = Cookie.get(key)
+      const item = this.store.get(key)
 
       return item ? JSON.parse(item) : defaultValue
     } catch {
       return defaultValue
     }
-  },
-  set: (key, value) => Cookie.set(key, JSON.stringify(value)),
-  remove: (key) => Cookie.remove(key),
+  }
+
+  set(key, value) {
+    this.store.set(key, JSON.stringify(value))
+  }
+
+  remove(key) {
+    this.store.remove(key)
+  }
 }
 
-export default Cookies
+export default new CookiesService(Cookie)

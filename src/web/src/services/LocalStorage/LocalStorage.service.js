@@ -1,15 +1,25 @@
-const LocalStorage = {
-  get: (key, defaultValue) => {
+export class LocalStorageService {
+  constructor(store) {
+    this.store = store
+  }
+
+  get(key, defaultValue) {
     try {
-      const item = window.localStorage.getItem(key)
+      const item = this.store.getItem(key)
 
       return item ? JSON.parse(item) : defaultValue
     } catch {
       return defaultValue
     }
-  },
-  set: (key, value) => window.localStorage.setItem(key, JSON.stringify(value)),
-  remove: (key) => window.localStorage.removeItem(key),
+  }
+
+  set(key, value) {
+    this.store.setItem(key, JSON.stringify(value))
+  }
+
+  remove(key) {
+    this.store.removeItem(key)
+  }
 }
 
-export default LocalStorage
+export default new LocalStorageService(window.localStorage)

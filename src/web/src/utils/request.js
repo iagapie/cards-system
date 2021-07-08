@@ -1,12 +1,18 @@
 import axios from 'axios'
 
+import { store } from '@/store'
+import { getAuth } from '@/store/selectors'
+import { setCsrf, rewriteTokens, logoutSuccess } from '@/store/authentication/authentication.slice'
+
 import history from './history'
+import { apiUrl, endpoints, routes } from './constants'
 
 const csrfHeader = 'x-csrf-token'
 const bearer = (token) => `Bearer ${token}`
 
 const isCsrfMethod = (method) => {
   const methods = ['post', 'put', 'patch', 'delete', 'trace']
+
   return methods.indexOf(method.toLowerCase()) !== -1
 }
 
@@ -16,26 +22,32 @@ const setCsrfToken = (data) => {
   if (headers[csrfHeader]) {
     store.dispatch(setCsrf(headers[csrfHeader]))
   }
+
   return data
 }
 
 const setCsrfHeader = (config) => {
-  const { csrf } = getToken(store.getState())
+  const { csrf } = getAuth(store.getState())
   if (!!csrf && isCsrfMethod(config.method)) {
     return {
       ...config,
       headers: { ...config.headers, [csrfHeader]: csrf },
     }
   }
+
   return config
 }
 
-export const authorization = (accessToken) => ({
-  Authorization: bearer(accessToken),
-})
+export const authorization = () => {
+  const { accessToken } = getAuth(store.getState())
+
+  return {
+    Authorization: bearer(accessToken),
+  }
+}
 
 export const fetch = axios.create({
-  baseURL: API_URL,
+  baseURL: apiUrl,
   withCredentials: true,
 })
 
@@ -43,11 +55,11 @@ fetch.interceptors.request.use(setCsrfHeader)
 
 const refresh = (token, error) =>
   fetch
-    .post(ENDPOINTS.AUTH.REFRESH, { token })
+    .post(endpoints.auth.refresh, { token })
     .then((response) => {
       const accessToken = response.data.access_token
       store.dispatch(
-        setAccessTokens({
+        rewriteTokens({
           accessToken,
           refreshToken: response.data.refresh_token,
         }),
@@ -59,11 +71,13 @@ const refresh = (token, error) =>
           Authorization: bearer(accessToken),
         },
       }
+
       return fetch(config)
     })
     .catch((err) => {
-      store.dispatch(removeAccessTokens())
-      history.push(ROUTES.AUTH.LOGIN)
+      store.dispatch(logoutSuccess())
+      history.push(routes.auth.login)
+
       return Promise.reject(err)
     })
 
@@ -71,15 +85,17 @@ const createResponseInterceptor = () => {
   const interceptor = fetch.interceptors.response.use(setCsrfToken, (error) => {
     setCsrfToken(error)
 
-    const { refreshToken } = getToken(store.getState())
+    const { refreshToken } = getAuth(store.getState())
 
     if (error?.response?.status === 401 && refreshToken) {
       fetch.interceptors.response.eject(interceptor)
+
       return refresh(refreshToken, error).finally(createResponseInterceptor)
     }
 
     if (error?.response?.status === 403) {
       fetch.interceptors.response.eject(interceptor)
+
       return fetch(error.response.config).finally(createResponseInterceptor)
     }
 
@@ -98,5 +114,6 @@ const executor = (config) => (resolve, reject) => {
 // prettier-ignore
 export const request = (method = 'GET') => (url) => ({ headers, params, data } = {}) => {
   const config = { method, url, headers, params, data }
+
   return new Promise(executor(config))
 }

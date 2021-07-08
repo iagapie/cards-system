@@ -1,15 +1,30 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { request } from '@/utils/request'
+import { endpoints } from '@/utils/constants'
 
-export const initialState = {
-  currentUser: value(keyUser, {}),
-  isAuthenticated: value(keyAuthenticated, false),
-  accessToken: '',
-  refreshToken: '',
-  csrf: '',
-  loading: false,
-  error: '',
+export class AuthService {
+  constructor(url) {
+    this.url = url
+  }
+
+  login({ email, password }) {
+    return request('POST')(this.url.login)({
+      data: {
+        email,
+        password,
+      },
+    })
+  }
+
+  registration({ name, email, password }) {
+    return request('POST')(this.url.registration)({
+      data: {
+        name,
+        email,
+        password,
+        repeat_password: password,
+      },
+    })
+  }
 }
 
-const authSlice = createSlice({
-  name: 'auth',
-})
+export default new AuthService(endpoints.auth)
