@@ -139,7 +139,7 @@ button,
     border-color: var(--color-btn);
     border-top-color: var(--color-transparent);
     border-width: 0.125rem;
-    border-radius: 100%;
+    border-radius: 9999px;
     animation: rotate infinite linear 1s;
   }
 
@@ -447,13 +447,6 @@ button,
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-sm);
     }
-  }
-
-  &__error {
-    text-align: center;
-    font-weight: 600;
-    font-size: var(--text-sm);
-    color: var(--color-error);
   }
 
   &__title {
@@ -1149,10 +1142,6 @@ button,
 }
 
 .add-board {
-  &__error {
-    color: var(--color-error);
-  }
-
   &__themes {
     display: flex;
     flex-flow: row wrap;

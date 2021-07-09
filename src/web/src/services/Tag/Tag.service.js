@@ -1,17 +1,13 @@
 import { request, authorization } from '@/utils/request'
 import { endpoints } from '@/utils/constants'
 
-export class TagService {
-  constructor(url) {
-    this.url = url
-  }
-
+class TagService {
   list(params) {
-    return request()(this.url.list)({
+    return request()(endpoints.tag.list)({
       headers: authorization(),
       params,
     })
   }
 }
 
-export default new TagService(endpoints.tag)
+export default new TagService()

@@ -1,22 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import LocalStorageService from '@/services/LocalStorage/LocalStorage.service'
-import CookiesService from '@/services/Cookies/Cookies.service'
+import localStorageService from '@/services/LocalStorage/LocalStorage.service'
+import cookiesService from '@/services/Cookies/Cookies.service'
 
 const keyUser = 'auth.user'
 const keyTokens = 'tokens'
 
-const currentUser = LocalStorageService.get(keyUser, {})
-const { accessToken, refreshToken } = CookiesService.get(keyTokens, { accessToken: '', refreshToken: '' })
+const currentUser = localStorageService.get(keyUser, {})
+const { accessToken, refreshToken } = cookiesService.get(keyTokens, { accessToken: '', refreshToken: '' })
+const isAuthenticated = Object.keys(currentUser).length !== 0 && !!accessToken && !!refreshToken
 
-export const initialState = {
-  currentUser,
-  isAuthenticated: Object.keys(currentUser).length !== 0,
-  accessToken,
-  refreshToken,
+const initialState = {
+  currentUser: isAuthenticated ? currentUser : {},
+  isAuthenticated,
+  accessToken: isAuthenticated ? accessToken : '',
+  refreshToken: isAuthenticated ? refreshToken : '',
   csrf: '',
   loading: false,
-  error: '',
 }
 
 const authSlice = createSlice({
@@ -25,73 +25,43 @@ const authSlice = createSlice({
   reducers: {
     login: (state) => {
       state.loading = true
-      state.error = ''
     },
-    loginSuccess: (state, { payload }) => {
-      const { currentUser, accessToken, refreshToken } = payload
-      state.currentUser = currentUser
-      state.accessToken = accessToken
-      state.refreshToken = refreshToken
+    loginSuccess: (state) => {
       state.isAuthenticated = true
-      state.loading = false
-      LocalStorageService.set(keyUser, currentUser)
-      CookiesService.set(keyTokens, { accessToken, refreshToken })
-    },
-    loginError: (state, { payload }) => {
-      state.error = payload
-      state.isAuthenticated = false
       state.loading = false
     },
     logout: (state) => {
       state.loading = true
     },
-    logoutSuccess: (state) => {
-      state.isAuthenticated = false
-      state.currentUser = {}
-      state.accessToken = ''
-      state.refreshToken = ''
-      state.error = ''
-      state.loading = false
-      LocalStorageService.remove(keyUser)
-      CookiesService.remove(keyTokens)
-    },
-    rewriteTokens: (state, { payload }) => {
-      const { accessToken, refreshToken } = payload
-      state.accessToken = accessToken
-      state.refreshToken = refreshToken
-      CookiesService.set(keyTokens, payload)
-    },
     registration: (state) => {
       state.loading = true
     },
-    registrationError: (state, { payload }) => {
-      state.error = payload
-      state.loading = false
+    setCurrentUser: (state, { payload }) => {
+      state.currentUser = payload
+      localStorageService.set(keyUser, payload)
+    },
+    setTokens: (state, { payload }) => {
+      const { accessToken, refreshToken } = payload
+      state.accessToken = accessToken
+      state.refreshToken = refreshToken
+      cookiesService.set(keyTokens, payload)
     },
     setCsrf: (state, { payload }) => {
       state.csrf = payload
     },
-    clearError: (state) => {
-      state.error = ''
-    },
-    noLoading: (state) => {
+    clearAuth: (state) => {
+      state.isAuthenticated = false
+      state.currentUser = {}
+      state.accessToken = ''
+      state.refreshToken = ''
       state.loading = false
+      localStorageService.remove(keyUser)
+      cookiesService.remove(keyTokens)
     },
   },
 })
 
-export const {
-  login,
-  loginSuccess,
-  loginError,
-  logout,
-  logoutSuccess,
-  rewriteTokens,
-  registration,
-  registrationError,
-  setCsrf,
-  clearError,
-  noLoading,
-} = authSlice.actions
+export const { login, loginSuccess, logout, registration, setCurrentUser, setTokens, setCsrf, clearAuth } =
+  authSlice.actions
 
 export default authSlice.reducer

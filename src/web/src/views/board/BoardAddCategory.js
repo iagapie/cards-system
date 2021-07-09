@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import { PlusIcon, XIcon } from '@heroicons/react/outline'
 import PropTypes from 'prop-types'
 
+import { getCategories } from '@/store/selectors'
+import { addCategory } from '@/store/categories/categories.slice'
+
 export const BoardAddCategory = ({ boardId, position, color }) => {
-  const loading = false
+  const { loading } = useSelector(getCategories)
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -16,13 +19,14 @@ export const BoardAddCategory = ({ boardId, position, color }) => {
     setFocus,
     formState: { isDirty, isValid },
     reset,
-  } = useForm({ mode: 'onChange' })
+  } = useForm({ mode: 'onChange', defaultValues: { boardId, position } })
 
   const disabled = useMemo(() => loading || !isDirty || !isValid, [loading, isDirty, isValid])
 
   const onSubmit = (data) => {
+    dispatch(addCategory(data))
     reset()
-    console.log(data)
+    setFocus('name')
   }
 
   const open = () => {

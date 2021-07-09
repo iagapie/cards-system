@@ -1,25 +1,21 @@
 import { request, authorization } from '@/utils/request'
 import { endpoints } from '@/utils/constants'
 
-export class BoardService {
-  constructor(url) {
-    this.url = url
-  }
-
+class BoardService {
   list() {
-    return request()(this.url.list)({
+    return request()(endpoints.board.list)({
       headers: authorization(),
     })
   }
 
   one(id) {
-    return request()(this.url.one(id))({
+    return request()(endpoints.board.one(id))({
       headers: authorization(),
     })
   }
 
   create({ name, color, description }) {
-    return request('POST')(this.url.list)({
+    return request('POST')(endpoints.board.list)({
       headers: authorization(),
       data: {
         name,
@@ -30,7 +26,7 @@ export class BoardService {
   }
 
   update({ id, name, color, description }) {
-    return request('PUT')(this.url.one(id))({
+    return request('PUT')(endpoints.board.one(id))({
       headers: authorization(),
       data: {
         name,
@@ -41,10 +37,10 @@ export class BoardService {
   }
 
   remove(id) {
-    return request('DELETE')(this.url.one(id))({
+    return request('DELETE')(endpoints.board.one(id))({
       headers: authorization(),
     })
   }
 }
 
-export default new BoardService(endpoints.board)
+export default new BoardService()

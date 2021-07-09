@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 
+import { routes } from '@/utils/constants'
+
 const HomePage = () => (
   <>
     <h1>Hello World</h1>
@@ -8,7 +10,7 @@ const HomePage = () => (
       eveniet magni non numquam odit possimus recusandae reiciendis repellendus tenetur totam ullam, vero voluptatibus.
       Ipsam?
     </div>
-    <Link to="/boards/dgvkhjfgjfgj">Board</Link>
+    <Link to={routes.board.list}>Boards</Link>
   </>
 )
 

@@ -1,11 +1,7 @@
-export class LocalStorageService {
-  constructor(store) {
-    this.store = store
-  }
-
+class LocalStorageService {
   get(key, defaultValue) {
     try {
-      const item = this.store.getItem(key)
+      const item = window.localStorage.getItem(key)
 
       return item ? JSON.parse(item) : defaultValue
     } catch {
@@ -14,12 +10,12 @@ export class LocalStorageService {
   }
 
   set(key, value) {
-    this.store.setItem(key, JSON.stringify(value))
+    window.localStorage.setItem(key, JSON.stringify(value))
   }
 
   remove(key) {
-    this.store.removeItem(key)
+    window.localStorage.removeItem(key)
   }
 }
 
-export default new LocalStorageService(window.localStorage)
+export default new LocalStorageService()

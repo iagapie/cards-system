@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { store } from '@/store'
 import { getAuth } from '@/store/selectors'
-import { setCsrf, rewriteTokens, logoutSuccess } from '@/store/authentication/authentication.slice'
+import { setCsrf, setTokens, clearAuth } from '@/store/authentication/authentication.slice'
 
 import history from './history'
 import { apiUrl, endpoints, routes } from './constants'
@@ -59,7 +59,7 @@ const refresh = (token, error) =>
     .then((response) => {
       const accessToken = response.data.access_token
       store.dispatch(
-        rewriteTokens({
+        setTokens({
           accessToken,
           refreshToken: response.data.refresh_token,
         }),
@@ -75,7 +75,7 @@ const refresh = (token, error) =>
       return fetch(config)
     })
     .catch((err) => {
-      store.dispatch(logoutSuccess())
+      store.dispatch(clearAuth())
       history.push(routes.auth.login)
 
       return Promise.reject(err)

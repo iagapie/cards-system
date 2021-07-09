@@ -1,120 +1,86 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { PageTitle } from '@/components/helmet/PageTitle'
-import { themes } from '@/utils/constants'
+import { Loading } from '@/components/loading/Loading'
+import NotFoundPage from '@/views/notFound/NotFoundPage'
+import { canAddCategory, getBoard, getCategories, getMembers } from '@/store/selectors'
+import { clearBoard, loadBoard } from '@/store/board/board.slice'
 
 import { BoardHeader } from './BoardHeader'
 import { BoardCategory } from './BoardCategory'
 import { BoardAddCategory } from './BoardAddCategory'
 import { BoardMenu } from './BoardMenu'
 
-const randomBg = () => {
-  const index = Math.floor(Math.random() * themes.length)
-
-  return themes[index]
-}
-
-const getCats = () => [
-  {
-    id: 'id1',
-    name: 'Waiting',
-    position: 1,
-  },
-  {
-    id: 'id2',
-    name: 'In progress',
-    position: 2,
-  },
-  {
-    id: 'id3',
-    name: 'Done',
-    position: 3,
-  },
-  {
-    id: 'id4',
-    name: 'In review',
-    position: 4,
-  },
-  {
-    id: 'id5',
-    name: 'Reviewed',
-    position: 5,
-  },
-  {
-    id: 'id6',
-    name: 'In Testing',
-    position: 6,
-  },
-  {
-    id: 'id7',
-    name: 'Closed',
-    position: 7,
-  },
-  // {
-  //   id: 'id8',
-  //   name: 'Reviewed',
-  //   position: 5,
-  // },
-  // {
-  //   id: 'id9',
-  //   name: 'In Testing',
-  //   position: 6,
-  // },
-  // {
-  //   id: 'id10',
-  //   name: 'Closed',
-  //   position: 7,
-  // },
-  // {
-  //   id: 'id11',
-  //   name: 'Closed',
-  //   position: 7,
-  // },
-  // {
-  //   id: 'id12',
-  //   name: 'Closed',
-  //   position: 7,
-  // },
-]
-
 const BoardPage = () => {
   const { boardId } = useParams()
-  const title = 'Board'
+  const { board, loading, notFound } = useSelector(getBoard)
+  const { categories } = useSelector(getCategories)
+  const { members } = useSelector(getMembers)
+  const canCreateCategory = useSelector(canAddCategory)
+
+  const title = useMemo(() => (board ? board.name : 'Board'), [board])
+  const position = useMemo(
+    () => (categories.length > 0 ? categories[categories.length - 1].position + 1 : 0),
+    [categories],
+  )
 
   const [isOpen, setIsOpen] = useState(false)
   const onOpen = () => setIsOpen(true)
   const onClose = () => setIsOpen(false)
 
-  const color = useMemo(() => randomBg(), [])
-  const categories = useMemo(() => getCats(), [])
+  const dispatch = useDispatch()
 
-  const canAddCategory = useMemo(() => categories.length < 50, [categories])
-  const position = useMemo(
-    () => (categories && categories.length > 0 ? categories[categories.length - 1].position + 1 : 0),
-    [categories],
-  )
+  useEffect(() => {
+    dispatch(loadBoard(boardId))
+
+    return () => {
+      dispatch(clearBoard())
+    }
+  }, [boardId, dispatch])
 
   return (
-    <main className="board-page">
-      <Helmet htmlAttributes={{ 'data-theme': color }} />
-      <PageTitle title={title} />
-      <BoardHeader isOpen={isOpen} onOpen={onOpen} />
-      <div className="board-page__wrapper">
-        <div className="board-page__categories">
-          {categories.map((category) => (
-            <BoardCategory key={category.id} category={category} color={color} className="board-page__category" />
-          ))}
-          {canAddCategory && (
-            <div className="board-page__category">
-              <BoardAddCategory boardId={boardId} color={color} position={position} />
-            </div>
+    <>
+      {notFound ? (
+        <NotFoundPage />
+      ) : (
+        <>
+          <PageTitle title={title} />
+          {loading ? (
+            <Loading />
+          ) : (
+            <>
+              {board && (
+                <main className="board-page">
+                  <Helmet htmlAttributes={{ 'data-theme': board.color }} />
+                  <BoardHeader board={board} members={members} isOpen={isOpen} onOpen={onOpen} />
+                  <div className="board-page__wrapper">
+                    <div className="board-page__categories">
+                      {categories.map((category) => (
+                        <BoardCategory
+                          key={category.id}
+                          category={category}
+                          color={board.color}
+                          className="board-page__category"
+                        />
+                      ))}
+                      {canCreateCategory && (
+                        <div className="board-page__category">
+                          <BoardAddCategory boardId={boardId} color={board.color} position={position} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <BoardMenu color={board.color} onClose={onClose} isOpen={isOpen} />
+                </main>
+              )}
+            </>
           )}
-        </div>
-      </div>
-      <BoardMenu color={color} onClose={onClose} isOpen={isOpen} />
-    </main>
+        </>
+      )}
+    </>
   )
 }
 

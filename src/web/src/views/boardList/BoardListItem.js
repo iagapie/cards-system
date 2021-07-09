@@ -3,15 +3,11 @@ import PropTypes from 'prop-types'
 
 import { routes } from '@/utils/constants'
 
-export const BoardListItem = ({ board }) => {
-  return (
-    <Link to={routes.board.one(board.id)} className="boards-page__item" data-theme={board.color}>
-      <span className="boards-page__item-name">
-        {board.name} {board.name} {board.name} {board.name} {board.name}
-      </span>
-    </Link>
-  )
-}
+export const BoardListItem = ({ board }) => (
+  <Link to={routes.board.one(board.id)} className="boards-page__item" data-theme={board.color}>
+    <span className="boards-page__item-name">{board.name}</span>
+  </Link>
+)
 
 BoardListItem.propTypes = {
   board: PropTypes.shape({

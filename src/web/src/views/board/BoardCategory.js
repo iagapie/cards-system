@@ -1,19 +1,16 @@
 import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { DotsHorizontalIcon } from '@heroicons/react/outline'
 import PropTypes from 'prop-types'
+
+import { getCards } from '@/store/selectors'
 
 import { BoardCard } from './BoardCard'
 import { BoardAddCard } from './BoardAddCard'
 
-const getCards = () =>
-  [...Array(Math.floor(Math.random() * 100)).keys()].map((i) => ({
-    id: `card${i}`,
-    name: `Task lorem ipsum ${1}`,
-    position: i,
-  }))
-
 export const BoardCategory = ({ category, color, className }) => {
-  const cards = useMemo(() => getCards(), [])
+  const { cards: allCards } = useSelector(getCards)
+  const cards = useMemo(() => allCards[category.id] || [], [allCards, category.id])
   const label = useMemo(() => (cards.length ? 'Add another card' : 'Add a card'), [cards])
   const position = useMemo(() => (cards && cards.length > 0 ? cards[cards.length - 1].position + 1 : 0), [cards])
 

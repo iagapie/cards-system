@@ -3,19 +3,15 @@ import querystring from 'query-string'
 import { request, authorization } from '@/utils/request'
 import { endpoints } from '@/utils/constants'
 
-export class CategoryService {
-  constructor(url) {
-    this.url = url
-  }
-
+class CategoryService {
   list(params) {
-    return request()(`${this.url.list}?${querystring.stringify(params)}`)({
+    return request()(`${endpoints.category.list}?${querystring.stringify(params)}`)({
       headers: authorization(),
     })
   }
 
   create({ boardId, name, position }) {
-    return request('POST')(this.url.list)({
+    return request('POST')(endpoints.category.list)({
       headers: authorization(),
       data: {
         board_id: boardId,
@@ -26,4 +22,4 @@ export class CategoryService {
   }
 }
 
-export default new CategoryService(endpoints.category)
+export default new CategoryService()

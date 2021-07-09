@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import { PlusIcon, XIcon } from '@heroicons/react/outline'
 import PropTypes from 'prop-types'
 
+import { getCards } from '@/store/selectors'
+import { addCard } from '@/store/cards/cards.slice'
+
 export const BoardAddCard = ({ label, categoryId, position, color }) => {
-  const loading = false
+  const { loading } = useSelector(getCards)
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -16,12 +19,14 @@ export const BoardAddCard = ({ label, categoryId, position, color }) => {
     setFocus,
     formState: { isDirty, isValid },
     reset,
-  } = useForm({ mode: 'onChange' })
+  } = useForm({ mode: 'onChange', defaultValues: { categoryId, position } })
 
   const disabled = useMemo(() => loading || !isDirty || !isValid, [loading, isDirty, isValid])
 
   const onSubmit = (data) => {
+    dispatch(addCard(data))
     reset()
+    setFocus('name')
   }
 
   const open = () => {

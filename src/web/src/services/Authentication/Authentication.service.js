@@ -1,13 +1,9 @@
 import { request } from '@/utils/request'
 import { endpoints } from '@/utils/constants'
 
-export class AuthService {
-  constructor(url) {
-    this.url = url
-  }
-
+class AuthService {
   login({ email, password }) {
-    return request('POST')(this.url.login)({
+    return request('POST')(endpoints.auth.login)({
       data: {
         email,
         password,
@@ -16,7 +12,7 @@ export class AuthService {
   }
 
   registration({ name, email, password }) {
-    return request('POST')(this.url.registration)({
+    return request('POST')(endpoints.auth.registration)({
       data: {
         name,
         email,
@@ -27,4 +23,4 @@ export class AuthService {
   }
 }
 
-export default new AuthService(endpoints.auth)
+export default new AuthService()

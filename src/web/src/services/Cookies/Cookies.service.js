@@ -4,14 +4,10 @@ Cookie.defaults = {
   sameSite: 'Lax',
 }
 
-export class CookiesService {
-  constructor(store) {
-    this.store = store
-  }
-
+class CookiesService {
   get(key, defaultValue) {
     try {
-      const item = this.store.get(key)
+      const item = Cookie.get(key)
 
       return item ? JSON.parse(item) : defaultValue
     } catch {
@@ -20,12 +16,12 @@ export class CookiesService {
   }
 
   set(key, value) {
-    this.store.set(key, JSON.stringify(value))
+    Cookie.set(key, JSON.stringify(value))
   }
 
   remove(key) {
-    this.store.remove(key)
+    Cookie.remove(key)
   }
 }
 
-export default new CookiesService(Cookie)
+export default new CookiesService()
