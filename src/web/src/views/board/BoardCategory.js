@@ -1,16 +1,12 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { DotsHorizontalIcon } from '@heroicons/react/outline'
+import { Droppable } from 'react-beautiful-dnd'
 import PropTypes from 'prop-types'
-
-import { getCards } from '@/store/selectors'
 
 import { BoardCard } from './BoardCard'
 import { BoardAddCard } from './BoardAddCard'
 
-export const BoardCategory = ({ category, color, className }) => {
-  const { cards: allCards } = useSelector(getCards)
-  const cards = useMemo(() => allCards[category.id] || [], [allCards, category.id])
+export const BoardCategory = ({ category, cards, color, className }) => {
   const label = useMemo(() => (cards.length ? 'Add another card' : 'Add a card'), [cards])
   const position = useMemo(() => (cards && cards.length > 0 ? cards[cards.length - 1].position + 1 : 0), [cards])
 
@@ -24,15 +20,20 @@ export const BoardCategory = ({ category, color, className }) => {
               <DotsHorizontalIcon className="category__menu-icon" />
             </button>
           </div>
-          {cards.length > 0 && (
-            <div className="category__body">
-              <div className="category__cards">
-                {cards.map((card) => (
-                  <BoardCard key={card.id} card={card} />
-                ))}
+          <Droppable droppableId={category.id}>
+            {(provided) => (
+              <div className="category__body" ref={provided.innerRef} {...provided.droppableProps}>
+                {cards.length > 0 && (
+                  <div className="category__cards">
+                    {cards.map((card, index) => (
+                      <BoardCard key={card.id} card={card} index={index} />
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
+          </Droppable>
           <div className="category__add-card">
             <BoardAddCard categoryId={category.id} label={label} position={position} color={color} />
           </div>
@@ -47,6 +48,13 @@ BoardCategory.propTypes = {
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
   }).isRequired,
+  cards: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      position: PropTypes.number,
+    }),
+  ).isRequired,
   color: PropTypes.string.isRequired,
   className: PropTypes.string,
 }
