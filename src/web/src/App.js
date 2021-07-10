@@ -3,25 +3,26 @@ import { Suspense, lazy } from 'react'
 
 import history from '@/utils/history'
 import { routes } from '@/utils/constants'
+import { NotificationContainer } from '@/components/notifications/NotificationContainer'
+import { Header } from '@/components/header/Header'
+import { Loading } from '@/components/loading/Loading'
+import { PageTitle } from '@/components/helmet/PageTitle'
+import { PublicRoute } from '@/components/routing/PublicRoute'
+import { PrivateRoute } from '@/components/routing/PrivateRoute'
+import NotFoundPage from '@/views/notFound/NotFoundPage'
 
-import NotFoundPage from './views/notFound/NotFoundPage'
-import { Header } from './components/header/Header'
-import { Loading } from './components/loading/Loading'
-import { PageTitle } from './components/helmet/PageTitle'
-import { PublicRoute } from './components/routing/PublicRoute'
-import { PrivateRoute } from './components/routing/PrivateRoute'
-
-const HomePage = lazy(() => import(/* webpackChunkName: "home" */ './views/home/HomePage'))
-const LoginPage = lazy(() => import(/* webpackChunkName: "login" */ './views/login/LoginPage'))
+const HomePage = lazy(() => import(/* webpackChunkName: "home" */ '@/views/home/HomePage'))
+const LoginPage = lazy(() => import(/* webpackChunkName: "login" */ '@/views/login/LoginPage'))
 const RegistrationPage = lazy(() =>
-  import(/* webpackChunkName: "registration" */ './views/registration/RegistrationPage'),
+  import(/* webpackChunkName: "registration" */ '@/views/registration/RegistrationPage'),
 )
-const BoardListPage = lazy(() => import(/* webpackChunkName: "boardList" */ './views/boardList/BoardListPage'))
-const BoardPage = lazy(() => import(/* webpackChunkName: "board" */ './views/board/BoardPage'))
+const BoardListPage = lazy(() => import(/* webpackChunkName: "boardList" */ '@/views/boardList/BoardListPage'))
+const BoardPage = lazy(() => import(/* webpackChunkName: "board" */ '@/views/board/BoardPage'))
 
 export const App = () => (
   <Router history={history}>
     <PageTitle />
+    <NotificationContainer />
     <Suspense fallback={<Loading />}>
       <Switch>
         <Route exact path={routes.root}>

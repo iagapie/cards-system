@@ -1,3 +1,4 @@
+export const getNotifications = (state) => state.notificationsState
 export const getAuth = (state) => state.authState
 export const getBoards = (state) => state.boardsState
 export const getCurrentBoard = (state) => state.currentBoardState

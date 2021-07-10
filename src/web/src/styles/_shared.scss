@@ -1,9 +1,10 @@
 :root {
   // z-index
-  --zindex-board-menu: 3;
-  --zindex-user-menu: 10;
   --zindex-category-menu: 5;
-  --zindex-modal: 15;
+  --zindex-board-menu: 30;
+  --zindex-user-menu: 40;
+  --zindex-modal: 50;
+  --zindex-notifications: 100;
 
   // radius
   --radius-sm: calc(var(--radius, 0.25rem) / 2);

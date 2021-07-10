@@ -4,13 +4,18 @@ import { v4 as uuid } from 'uuid'
 const dismiss = 4000 // 4s
 
 export const NotifyType = Object.freeze({
-  info: Symbol('info'),
-  success: Symbol('success'),
-  warning: Symbol('warning'),
-  error: Symbol('error'),
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+  error: 'error',
 })
 
-const normalize = (notification) => ({ id: uuid(), title: '', type: NotifyType.info, dismiss, ...notification })
+const normalize = (notification) => {
+  const type = notification.type || NotifyType.info
+  const title = type.charAt(0).toUpperCase() + type.slice(1)
+
+  return { id: uuid(), title, type, dismiss, ...notification }
+}
 
 const initialState = {
   notifications: [], // { id, title, type: NotifyType, dismiss: < 1 for infinite, message }
@@ -21,16 +26,16 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     addNotification: (state, { payload }) => {
-      state.notifications.push(normalize(payload))
+      state.notifications.unshift(normalize(payload))
     },
     addSuccess: (state, { payload }) => {
-      state.notifications.push(normalize({ type: NotifyType.success, ...payload }))
+      state.notifications.unshift(normalize({ type: NotifyType.success, ...payload }))
     },
     addWarning: (state, { payload }) => {
-      state.notifications.push(normalize({ type: NotifyType.warning, ...payload }))
+      state.notifications.unshift(normalize({ type: NotifyType.warning, ...payload }))
     },
     addError: (state, { payload }) => {
-      state.notifications.push(normalize({ type: NotifyType.error, ...payload }))
+      state.notifications.unshift(normalize({ type: NotifyType.error, ...payload }))
     },
     removeNotification: (state, { payload }) => {
       const id = typeof payload === 'string' ? payload : payload.id
