@@ -11,7 +11,7 @@ export const BoardHeader = ({ board, members, isOpen, onOpen }) => {
     <div className="header board-page__header">
       <div className="header__group">
         <button className="header-btn">
-          <span className="header-btn__text">{board.name}</span>
+          <span className="header-btn__text header-btn__text_bold">{board.name}</span>
         </button>
         <div className="header__divide" />
         <button className="header-btn">
