@@ -1,8 +1,8 @@
 import { put, select } from 'redux-saga/effects'
 import { v4 as uuid } from 'uuid'
 
-import { getCategories } from '@/store/selectors'
-import { addCardSuccess, setCards, setLoading } from '@/store/cards/cards.slice'
+import { getBoard, getCards, getCategories } from '@/store/selectors'
+import { addCardSuccess, setCards, setLoading, setLoadingPosition } from '@/store/cards/cards.slice'
 import { addError } from '@/store/notifications/notifications.slice'
 
 export function* loadCardsWorker() {
@@ -47,4 +47,26 @@ export function* addCardWorker({ payload }) {
     yield put(addError(error.message))
     yield put(setLoading(false))
   }
+}
+
+export function* updateCardPositionWorker({ payload }) {
+  const { board } = yield select(getBoard)
+  const { cards } = yield select(getCards)
+  const oldCards = JSON.parse(JSON.stringify(cards))
+
+  try {
+    const newCards = JSON.parse(JSON.stringify(cards))
+    const item = newCards[payload.source.droppableId].splice(payload.source.index, 1)
+    newCards[payload.destination.droppableId].splice(payload.destination.index, 0, item[0])
+    newCards[payload.destination.droppableId] = newCards[payload.destination.droppableId].map((item, i) => ({
+      ...item,
+      position: i,
+    }))
+    yield put(setCards(newCards))
+  } catch (error) {
+    yield put(addError(error.message))
+    yield put(setCards(oldCards))
+  }
+
+  yield put(setLoadingPosition(false))
 }

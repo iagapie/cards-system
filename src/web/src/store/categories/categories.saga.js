@@ -3,7 +3,7 @@ import { call, put, select } from 'redux-saga/effects'
 import categoryService from '@/services/Category/Category.service'
 import { addCategorySuccess, setCategories, setLoading, setLoadingPosition } from '@/store/categories/categories.slice'
 import { addError } from '@/store/notifications/notifications.slice'
-import { getCategories } from '@/store/selectors'
+import { getBoard, getCategories } from '@/store/selectors'
 
 export function* loadCategoriesWorker({ payload }) {
   const {
@@ -27,24 +27,25 @@ export function* addCategoryWorker({ payload }) {
 }
 
 export function* updateCategoryPositionWorker({ payload }) {
+  const { board } = yield select(getBoard)
   const { categories } = yield select(getCategories)
   const oldCats = categories.slice()
 
   try {
     let newCats = categories.slice()
-    newCats.splice(payload.source, 1)
-    newCats.splice(payload.destination, 0, oldCats[payload.source])
+    newCats.splice(payload.source.index, 1)
+    newCats.splice(payload.destination.index, 0, oldCats[payload.source.index])
     newCats = newCats.map((c, i) => ({ ...c, position: i }))
 
     yield put(setCategories(newCats))
     yield call(categoryService.updatePosition, {
-      boardId: payload.boardId,
+      boardId: board.id,
       categories: newCats.map((c) => ({ id: c.id, position: c.position })),
     })
-    yield put(setLoadingPosition(false))
   } catch (error) {
     yield put(addError(error.message))
     yield put(setCategories(oldCats))
-    yield put(setLoadingPosition(false))
   }
+
+  yield put(setLoadingPosition(false))
 }

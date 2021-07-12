@@ -11,6 +11,7 @@ import NotFoundPage from '@/views/notFound/NotFoundPage'
 import { canAddCategory, getBoard, getCards, getCategories, getMembers } from '@/store/selectors'
 import { clearBoard, loadBoard } from '@/store/board/board.slice'
 import { updateCategoryPosition } from '@/store/categories/categories.slice'
+import { updateCardPosition } from '@/store/cards/cards.slice'
 
 import { BoardHeader } from './BoardHeader'
 import { BoardCategory } from './BoardCategory'
@@ -38,7 +39,7 @@ const BoardPage = () => {
   const dispatch = useDispatch()
 
   const onDragEnd = (result) => {
-    const { destination, source, draggableId, type } = result
+    const { destination, source, type } = result
 
     if (!destination) {
       return
@@ -49,11 +50,12 @@ const BoardPage = () => {
     }
 
     if (type === dndTypes.category) {
-      dispatch(updateCategoryPosition({ boardId, source: source.index, destination: destination.index }))
+      dispatch(updateCategoryPosition({ source, destination }))
 
       return
     }
-    console.log(result)
+
+    dispatch(updateCardPosition({ source, destination }))
   }
 
   useEffect(() => {

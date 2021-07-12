@@ -15,6 +15,7 @@ const add = (data, payload) => {
 const initialState = {
   cards: {},
   loading: false,
+  loadingPosition: false,
 }
 
 const cardsSlice = createSlice({
@@ -22,7 +23,11 @@ const cardsSlice = createSlice({
   initialState,
   reducers: {
     setCards: (state, { payload }) => {
-      state.cards = groupBy(orderBy(payload), 'category_id')
+      if (Array.isArray(payload)) {
+        state.cards = groupBy(orderBy(payload), 'category_id')
+      } else {
+        state.cards = payload
+      }
     },
     addCard: (state) => {
       state.loading = true
@@ -59,6 +64,12 @@ const cardsSlice = createSlice({
     setLoading: (state, { payload }) => {
       state.loading = !!payload
     },
+    updateCardPosition: (state) => {
+      state.loadingPosition = true
+    },
+    setLoadingPosition: (state, { payload }) => {
+      state.loadingPosition = !!payload
+    },
   },
 })
 
@@ -72,6 +83,8 @@ export const {
   removeCardSuccess,
   removeByCategoryId,
   setLoading,
+  updateCardPosition,
+  setLoadingPosition,
 } = cardsSlice.actions
 
 export default cardsSlice.reducer

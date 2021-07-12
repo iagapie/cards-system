@@ -8,8 +8,8 @@ import { loadBoard } from '@/store/board/board.slice'
 import { loadBoardWorker } from '@/store/board/board.saga'
 import { addCategory, updateCategoryPosition } from '@/store/categories/categories.slice'
 import { addCategoryWorker, updateCategoryPositionWorker } from '@/store/categories/categories.saga'
-import { addCard } from '@/store/cards/cards.slice'
-import { addCardWorker } from '@/store/cards/cards.saga'
+import { addCard, updateCardPosition } from '@/store/cards/cards.slice'
+import { addCardWorker, updateCardPositionWorker } from '@/store/cards/cards.saga'
 
 function* rootSaga() {
   yield all([
@@ -21,7 +21,8 @@ function* rootSaga() {
     takeLatest(addBoard.type, addBoardWorker),
     takeLatest(addCategory.type, addCategoryWorker),
     takeLatest(addCard.type, addCardWorker),
-    takeLatest(updateCategoryPosition().type, updateCategoryPositionWorker),
+    takeLatest(updateCategoryPosition.type, updateCategoryPositionWorker),
+    takeLatest(updateCardPosition.type, updateCardPositionWorker),
   ])
 }
 
