@@ -23,6 +23,7 @@ type Handler struct {
 func (h *Handler) Register(router *mux.Router) {
 	router.Handle(categoriesURL, h.Auth(h.GetCategories, category_service.FilterDTO{})).Methods(http.MethodGet, http.MethodOptions)
 	router.Handle(categoriesURL, h.Auth(h.CreateCategory, category_service.CreateCategoryDTO{})).Methods(http.MethodPost, http.MethodOptions)
+	router.Handle(categoriesURL, h.Auth(h.UpdatePosition, category_service.UpdateCategoryListPositionDTO{})).Methods(http.MethodPatch, http.MethodOptions)
 }
 
 func (h *Handler) GetCategories(w http.ResponseWriter, r *http.Request) error {
@@ -52,6 +53,22 @@ func (h *Handler) CreateCategory(w http.ResponseWriter, r *http.Request) error {
 
 	w.Header().Set(gof.HeaderLocation, fmt.Sprintf("%s/%s", r.URL.RequestURI(), id))
 	w.WriteHeader(http.StatusCreated)
+
+	return nil
+}
+
+func (h *Handler) UpdatePosition(w http.ResponseWriter, r *http.Request) error {
+	h.Log.Info("UPDATE CATEGORIES POSITION")
+
+	h.Log.Debug("get update category list position dto from context")
+	dto := middleware.GetModelsFromContext(r)[0].(category_service.UpdateCategoryListPositionDTO)
+
+	err := h.CategoryService.UpdatePosition(r.Context(), dto)
+	if err != nil {
+		return err
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 
 	return nil
 }

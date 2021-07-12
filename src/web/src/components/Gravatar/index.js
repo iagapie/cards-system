@@ -1,1 +1,0 @@
-export { Gravatar } from './Gravatar'

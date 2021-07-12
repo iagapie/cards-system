@@ -151,6 +151,10 @@ func CORS(cfg CORSConfig, router *mux.Router, log logrus.FieldLogger) mux.Middle
 			w.Header().Add(gof.HeaderVary, gof.HeaderAccessControlRequestMethod)
 			w.Header().Add(gof.HeaderVary, gof.HeaderAccessControlRequestHeaders)
 			w.Header().Set(gof.HeaderAccessControlAllowOrigin, allowOrigin)
+
+			// TODO
+			w.Header().Set(gof.HeaderAccessControlAllowMethods, strings.Join([]string { http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodPost }, ","))
+
 			if cfg.AllowCredentials {
 				w.Header().Set(gof.HeaderAccessControlAllowCredentials, "true")
 			}

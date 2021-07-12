@@ -14,6 +14,22 @@ type CreateCategoryDTO struct {
 	CreatedBy string `json:"created_by,omitempty" context:"claim_id" validate:"required,uuid4"`
 }
 
+type UpdateCategoryDTO struct {
+	Name     string `json:"name,omitempty" validate:"required,max=150"`
+	Position int    `json:"position,omitempty"`
+}
+
+type UpdateCategoryPositionDTO struct {
+	ID       string `json:"id,omitempty" validate:"required,uuid4"`
+	Position int    `json:"position,omitempty"`
+}
+
+type UpdateCategoryListPositionDTO struct {
+	UserID     string                      `context:"claim_id" validate:"required,uuid4"`
+	BoardID    string                      `json:"board_id,omitempty" validate:"required,uuid4"`
+	Categories []UpdateCategoryPositionDTO `json:"categories,omitempty" validate:"gt=0,dive,required"`
+}
+
 type Category struct {
 	ID          string    `json:"id,omitempty"`
 	ParentID    string    `json:"parent_id,omitempty"`
