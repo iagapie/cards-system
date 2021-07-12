@@ -6,8 +6,8 @@ import { addBoard, loadBoards } from '@/store/boards/boards.slice'
 import { addBoardWorker, loadBoardsWorker } from '@/store/boards/boards.saga'
 import { loadBoard } from '@/store/board/board.slice'
 import { loadBoardWorker } from '@/store/board/board.saga'
-import { addCategory } from '@/store/categories/categories.slice'
-import { addCategoryWorker } from '@/store/categories/categories.saga'
+import { addCategory, updateCategoryPosition } from '@/store/categories/categories.slice'
+import { addCategoryWorker, updateCategoryPositionWorker } from '@/store/categories/categories.saga'
 import { addCard } from '@/store/cards/cards.slice'
 import { addCardWorker } from '@/store/cards/cards.saga'
 
@@ -21,6 +21,7 @@ function* rootSaga() {
     takeLatest(addBoard.type, addBoardWorker),
     takeLatest(addCategory.type, addCategoryWorker),
     takeLatest(addCard.type, addCardWorker),
+    takeLatest(updateCategoryPosition().type, updateCategoryPositionWorker),
   ])
 }
 

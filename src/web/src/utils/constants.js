@@ -30,3 +30,8 @@ export const validation = Object.freeze({
   email: /\S+@\S+\.\S+/,
   password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[\w\s\-^$&*!@#]{8,64}$/,
 })
+
+export const dndTypes = Object.freeze({
+  category: 'CATEGORY',
+  card: 'CARD',
+})

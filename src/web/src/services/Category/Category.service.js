@@ -20,6 +20,16 @@ class CategoryService {
       },
     })
   }
+
+  updatePosition({ boardId, categories }) {
+    return request('PATCH')(endpoints.category.list)({
+      headers: authorization(),
+      data: {
+        board_id: boardId,
+        categories,
+      },
+    })
+  }
 }
 
 export default new CategoryService()

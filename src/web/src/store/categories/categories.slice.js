@@ -5,6 +5,7 @@ import { findIndex, orderBy } from '@/utils/helpers'
 const initialState = {
   categories: [],
   loading: false,
+  loadingPosition: false,
 }
 
 const categoriesSlice = createSlice({
@@ -28,7 +29,7 @@ const categoriesSlice = createSlice({
       const index = findIndex(state.categories, payload)
       if (index !== -1) {
         state.categories.splice(index, 1, payload)
-        state.categories = orderBy(state.categories)
+        state.categories = orderBy(payload)
       }
       state.loading = false
     },
@@ -45,6 +46,12 @@ const categoriesSlice = createSlice({
     setLoading: (state, { payload }) => {
       state.loading = !!payload
     },
+    updateCategoryPosition: (state) => {
+      state.loadingPosition = true
+    },
+    setLoadingPosition: (state, { payload }) => {
+      state.loadingPosition = !!payload
+    },
   },
 })
 
@@ -57,6 +64,8 @@ export const {
   removeCategory,
   removeCategorySuccess,
   setLoading,
+  updateCategoryPosition,
+  setLoadingPosition,
 } = categoriesSlice.actions
 
 export default categoriesSlice.reducer
