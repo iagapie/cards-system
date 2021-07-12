@@ -8,7 +8,7 @@ module.exports = {
       browsers: 'last 2 versions',
       autoprefixer: {
         flexbox: 'no-2009',
-        grid: 'autoplace',
+        // grid: 'autoplace',
       },
       stage: 3,
     }),

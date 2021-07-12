@@ -57,6 +57,7 @@ export function* updateCardPositionWorker({ payload }) {
   try {
     const newCards = JSON.parse(JSON.stringify(cards))
     const item = newCards[payload.source.droppableId].splice(payload.source.index, 1)
+    item[0]['category_id'] = payload.destination.droppableId
     newCards[payload.destination.droppableId].splice(payload.destination.index, 0, item[0])
     newCards[payload.destination.droppableId] = newCards[payload.destination.droppableId].map((item, i) => ({
       ...item,
