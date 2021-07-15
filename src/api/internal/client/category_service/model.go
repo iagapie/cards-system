@@ -7,6 +7,11 @@ type FilterDTO struct {
 	BoardID     string   `query:"board" validate:"omitempty,uuid4"`
 }
 
+type IdDTO struct {
+	ID     string `param:"id" validate:"required,uuid4"`
+	UserID string `context:"claim_id" validate:"required,uuid4"`
+}
+
 type CreateCategoryDTO struct {
 	BoardID   string `json:"board_id,omitempty" validate:"required,uuid4"`
 	Name      string `json:"name,omitempty" validate:"required,max=150"`

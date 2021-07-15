@@ -25,6 +25,8 @@ func (h *Handler) Register(router *mux.Router) {
 	router.Handle(boardsURL, h.Auth(h.GetBoards, user_service.AuthClaimsDTO{})).Methods(http.MethodGet, http.MethodOptions)
 	router.Handle(boardsURL, h.Auth(h.CreateBoard, board_service.CreateBoardDTO{})).Methods(http.MethodPost, http.MethodOptions)
 	router.Handle(boardURL, h.Auth(h.GetBoard, board_service.IdDTO{})).Methods(http.MethodGet, http.MethodOptions)
+	router.Handle(boardURL, h.Auth(h.UpdateBoard, board_service.IdDTO{}, board_service.UpdateBoardDTO{})).Methods(http.MethodPut, http.MethodOptions)
+	router.Handle(boardURL, h.Auth(h.DeleteBoard, board_service.IdDTO{})).Methods(http.MethodDelete, http.MethodOptions)
 }
 
 func (h *Handler) GetBoards(w http.ResponseWriter, r *http.Request) error {
@@ -68,6 +70,41 @@ func (h *Handler) CreateBoard(w http.ResponseWriter, r *http.Request) error {
 
 	w.Header().Set(gof.HeaderLocation, fmt.Sprintf("%s/%s", r.URL.RequestURI(), id))
 	w.WriteHeader(http.StatusCreated)
+
+	return nil
+}
+
+func (h *Handler) UpdateBoard(w http.ResponseWriter, r *http.Request) error {
+	h.Log.Info("UPDATE BOARD")
+
+	h.Log.Debug("get id dto from context")
+	idDto := middleware.GetModelsFromContext(r)[0].(board_service.IdDTO)
+
+	h.Log.Debug("get update board dto from context")
+	dto := middleware.GetModelsFromContext(r)[1].(board_service.UpdateBoardDTO)
+
+	err := h.BoardService.Update(r.Context(), idDto.ID, idDto.UserID, dto)
+	if err != nil {
+		return err
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+
+	return nil
+}
+
+func (h *Handler) DeleteBoard(w http.ResponseWriter, r *http.Request) error {
+	h.Log.Info("DELETE BOARD")
+
+	h.Log.Debug("get id dto from context")
+	dto := middleware.GetModelsFromContext(r)[0].(board_service.IdDTO)
+
+	err := h.BoardService.Delete(r.Context(), dto.ID, dto.UserID)
+	if err != nil {
+		return err
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 
 	return nil
 }

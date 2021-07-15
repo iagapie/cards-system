@@ -52,7 +52,7 @@ export const BoardAddCard = ({ label, categoryId, position, color }) => {
         placeholder="Enter a title for this card..."
         {...register('name', {
           required: 'required',
-          maxLength: 150,
+          maxLength: 255,
         })}
       />
       <div className={isOpen ? 'add-card__footer add-card__footer_open' : 'add-card__footer'}>
